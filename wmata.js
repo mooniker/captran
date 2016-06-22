@@ -1,10 +1,10 @@
 'use strict'
 
-var env // must include WMATA API developer key `env.WMATA_KEY`
+var env // must include WMATA API developer key, accessed as `env.WMATA_KEY`
 
-try {
+try { // look for environment config file on local machine
   env = require('./env')
-} catch (localEnvJsNotPresentException) {
+} catch (localEnvJsNotPresentException) { // otherwise use environemnt vars
   env = process.env
 }
 
@@ -31,7 +31,7 @@ const requestUrl = {
   }
 }
 
-// helpers
+// helper function to craft request urls with query params for API endpoints
 const renderUriWithParams = (uri, params, apiKey) => encodeURI(
     `${uri}?` +
     Object.keys(params).filter((key) =>
@@ -39,23 +39,9 @@ const renderUriWithParams = (uri, params, apiKey) => encodeURI(
         `&api_key=${apiKey || env.WMATA_KEY}`
   )
 
-var callCount = 0 // FIXME perhaps this approach won't work
-
-function incrementCallCount () {
-  callCount++
-  return callCount
-}
-
-function getCallCount () {
-  return callCount
-}
-
-var callWmata = (endpoint, params, apiKey) => {
-  incrementCallCount()
-  // pre-limiter version:
-  // return request(renderUriWithParams(endpoint, params, apiKey)).then(JSON.parse)
-  return limiter.schedule(request, renderUriWithParams(endpoint, params, apiKey)).then(JSON.parse)
-}
+var callWmata = (endpoint, params, apiKey) => limiter
+  .schedule(request, renderUriWithParams(endpoint, params, apiKey))
+  .then(JSON.parse)
 
 const busServices = { // API wrapper for bus services
   // # WMATA Bus Route and Stop Methods (JSON)
@@ -151,12 +137,6 @@ module.exports = {
   // metrorail: railService,
 
   // helper function for rendering request URL with query parameters
-  renderUriWithParams: renderUriWithParams, // exported for testing
-
-  incrementCallCount: incrementCallCount,
-
-  getCallCount: getCallCount,
-
-  requestUrl: requestUrl
+  renderUriWithParams: renderUriWithParams // exported for testing
 
 }
