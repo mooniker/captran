@@ -1,3 +1,7 @@
+'use strict'
+
+// This is an example HTTP server for the WMATA API wrapper.
+
 const http = require('http')
 const wmata = require('./wmata') // WMATA API wrapper
 
