@@ -17,7 +17,6 @@ try { // look for environment config file on local machine
 // dependencies
 const Bottleneck = require('bottleneck')
 const Redis = require('ioredis')
-// const redis = require('then-redis')
 
 const request = require('request-promise')
 const busServicesRequestUrl = 'https://api.wmata.com/Bus.svc/json/'
@@ -47,11 +46,6 @@ const createDatastoreKey = (endpoint, params) => JSON.stringify({
 
 var limiter = new Bottleneck(10, 1000)
 var datastore = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
-// const datastore = redis.createClient()
-
-// var callWmata = (endpoint, params, apiKey) => limiter
-//   .schedule(request, renderUriWithParams(endpoint, params, apiKey))
-//   .then(JSON.parse)
 
 var callWmata = (endpoint, params, apiKey) => limiter
   .schedule(request, renderUriWithParams(endpoint, params, apiKey))
@@ -59,7 +53,7 @@ var callWmata = (endpoint, params, apiKey) => limiter
 
 var updateDatastore = (endpoint, params, apiKey) =>
   callWmata(endpoint, params, apiKey).then((data) => {
-    console.log('Updating cache')
+    // console.log('Updating cache')
     let key = createDatastoreKey(endpoint, params)
     datastore.set(key, JSON.stringify(data))
     datastore.expire(key, 10)
@@ -73,16 +67,13 @@ var callLocal = function (endpoint, params, apiKey) {
     let key = createDatastoreKey(endpoint, params)
     datastore.get(key, function (error, result) {
       if (error) reject('datastore get error:', error)
-      else if (result) {
-        console.log('using cache, not calling wmata')
-        datastore.ttl(key, function (err, result) {
-          console.log(err || key + 'TTL' + result)
-        })
-        resolve(result)
-      } else {
-        console.log('no cache, calling wmata')
-        resolve(updateDatastore(endpoint, params, apiKey))
-      }
+      // else if (result) {
+      //   resolve(result)
+      // } else {
+      //   // console.log('no cache, calling wmata')
+      //   resolve(updateDatastore(endpoint, params, apiKey))
+      // }
+      else resolve(JSON.parse(result) || updateDatastore(endpoint, params, apiKey))
     })
   })
 }
@@ -95,25 +86,9 @@ const busServices = { // API wrapper for bus services
 
   // getAllPositions: () => callWmata(requestUrl.forBus.positions, {}),
 
-  // getAllPositions: () => updateCache(requestUrl.forBus.positions, {}),
-
+  // cache with WMATA call fallback/update version
   getAllPositions: () => callLocal(requestUrl.forBus.positions, {}),
 
-
-  // getAllPositions: () => redis.get('WMATA Bus Positions')
-  //   .then(function(result) {
-  //     console.log('result:', result)
-  //     return result || callWmata(requestUrl.forBus.positions, {}).then()
-  //   }, function(e) {
-  //     console.error(e)
-  //   }),
-
-  // getAllPositions: () => redis.get('wmata.jBusPositions')
-  //   .then((data) => (data) => data || callWmata(requestUrl.forBus.positions, {})
-  //     .then((data) => {
-  //       redis.set('wmata.jBusPositions', data)
-  //     })
-  //   ),
 
   getPositionsNear: (lat, long, radius) => callWmata(requestUrl.forBus.positions, {
     Lat: lat,
@@ -192,7 +167,7 @@ const busServices = { // API wrapper for bus services
 
 module.exports = {
 
-  ping: (request) => JSON.parse('{ "body": "pong"}'),
+  ping: () => 'pong',
 
   // WMATA Bus Route and Stop Methods (JSON)
   metrobus: busServices,

@@ -34,8 +34,8 @@ describe('renderUriWithParams helper function', function () {
 describe('WMATA API wrapper', function () {
 
   const wmata = require('../wmata')
-  it('should have dummy ping function', () => {
-    assert.equal(typeof(wmata.ping()), 'object')
-    assert.equal(wmata.ping().body, 'pong')
+  it('should have dummy ping function that returns "pong"', () => {
+    assert.equal(typeof(wmata.ping()), 'string')
+    assert.equal(wmata.ping(), 'pong')
   })
 })
