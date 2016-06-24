@@ -33,18 +33,13 @@ const requestUrl = {
 }
 
 // helper function to craft request urls with query params for API endpoints
-const renderUriWithParams = (uri, params, apiKey) => {
-  // console.log(uri, params, apiKey)
-  // if (params) console.log('hey')
-  // else console.log('no hey')
-  let url = encodeURI(
-    `${uri}?` + (params ? Object.keys(params).filter((key) =>
-      params[key] !== null).map((key) => `${key}=${params[key]}`).join('&') : '') +
-        `&api_key=${apiKey || env.WMATA_KEY}`
-  )
-  // console.log(url)
-  return url
-}
+const renderUriWithParams = (uri, params, apiKey) => encodeURI(
+  `${uri}?` + (params
+    ? Object.keys(params).filter((key) => // exclude keys whose value is null
+      params[key] !== null).map((key) => `${key}=${params[key]}`).join('&')
+    : '') +
+      `&api_key=${apiKey || env.WMATA_KEY}`
+)
 
 function stampTime(json) {
   // timestamp the json
@@ -58,7 +53,6 @@ function stampTime(json) {
 }
 
 var limiter = new Bottleneck(10, 1000)
-// var datastore = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
 
 // apiKey set to falsy defaults to environement var
 var callWmata = (endpoint, params, apiKey) => limiter
