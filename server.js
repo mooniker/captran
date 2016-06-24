@@ -4,7 +4,7 @@
 
 const http = require('http')
 const wmata = require('./wmata')
-const wmataCache = require('./wmata_cache') // WMATA API wrapper (with local caching)
+// const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
 
 var server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -28,19 +28,19 @@ var server = http.createServer((request, response) => {
       respondWithJson({ 'body': 'pong' })
       break
     case 'buses':
-      wmataCache.metrobus.positions.all().then(respondWithJson, console.error)
+      wmata.metrobus.positions.all().then(respondWithJson, console.error)
       break
     case 'routes':
-      wmataCache.metrobus.routes().then(respondWithJson, console.error)
+      wmata.metrobus.routes.all().then(respondWithJson, console.error)
       break
     case 'lafeyette':
       wmata.metrobus.arrivalPredictions.atLafeyette().then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
-        wmataCache.metrobus.stops.nearPentagon().then(respondWithJson, console.error)
+        wmata.metrobus.stops.nearPentagon().then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
-        wmataCache.metrobus.positions.nearPentagon().then(respondWithJson, console.error)
+        wmata.metrobus.positions.nearPentagon().then(respondWithJson, console.error)
       else respond404()
       break
     default: respond404()

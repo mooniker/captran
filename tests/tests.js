@@ -82,40 +82,40 @@ describe('WMATA API wrapper', function () {
     })
   })
 })
-
-describe('WMATA API cache', () => {
-  // const wmataCache = require('../wmata_cache')
-  // const wmata = require('../wmata')
-  it('should have dummy ping function that returns "pong"', () => {
-    assert.equal(typeof(wmataCache.ping()), 'string')
-    assert.equal(wmataCache.ping(), 'pong')
-  })
-  it('should have corresponding functions with the WMATA API wrapper (shallow check)', () => {
-    let wrapperKeys = Object.keys(wmata.metrobus)
-    let cacheKeys = Object.keys(wmataCache.metrobus)
-    assert.deepEqual(wrapperKeys, cacheKeys)
-    for (let i = 0; i < wrapperKeys.length; i++) {
-      assert.deepEqual(Object.keys(wmata.metrobus[wrapperKeys[i]]), Object.keys(wmataCache.metrobus[cacheKeys[i]]))
-    }
-  })
-  it('should return the same data as a direct call to WMATA API', () => {
-    setTimeout(() => {
-      Promise.all([
-        wmata.metrobus.positions.nearPentagon(),
-        wmataCache.metrobus.positions.nearPentagon(),
-        wmata.metrobus.stops.nearPentagon(),
-        wmataCache.metrobus.stops.nearPentagon()
-      ]).then(results => {
-        assert.equal(results[0], results[1])
-        assert.equal(results[2], results[3])
-        done()
-      })
-    }, 20000)
-  })
-  it('should return proper stop name for arrival times near Kościuszko statue', () => {
-    wmataCache.metrobus.arrivalPredictions.atLafeyette().then(result => {
-      assert.equal(result.StopName, 'H St + Madison Pl Nw')
-      done()
-    })
-  })
-})
+//
+// describe('WMATA API cache', () => {
+//   // const wmataCache = require('../wmata_cache')
+//   // const wmata = require('../wmata')
+//   it('should have dummy ping function that returns "pong"', () => {
+//     assert.equal(typeof(wmataCache.ping()), 'string')
+//     assert.equal(wmataCache.ping(), 'pong')
+//   })
+//   it('should have corresponding functions with the WMATA API wrapper (shallow check)', () => {
+//     let wrapperKeys = Object.keys(wmata.metrobus)
+//     let cacheKeys = Object.keys(wmataCache.metrobus)
+//     assert.deepEqual(wrapperKeys, cacheKeys)
+//     for (let i = 0; i < wrapperKeys.length; i++) {
+//       assert.deepEqual(Object.keys(wmata.metrobus[wrapperKeys[i]]), Object.keys(wmataCache.metrobus[cacheKeys[i]]))
+//     }
+//   })
+//   it('should return the same data as a direct call to WMATA API', () => {
+//     setTimeout(() => {
+//       Promise.all([
+//         wmata.metrobus.positions.nearPentagon(),
+//         wmataCache.metrobus.positions.nearPentagon(),
+//         wmata.metrobus.stops.nearPentagon(),
+//         wmataCache.metrobus.stops.nearPentagon()
+//       ]).then(results => {
+//         assert.equal(results[0], results[1])
+//         assert.equal(results[2], results[3])
+//         done()
+//       })
+//     }, 20000)
+//   })
+//   it('should return proper stop name for arrival times near Kościuszko statue', () => {
+//     wmataCache.metrobus.arrivalPredictions.atLafeyette().then(result => {
+//       assert.equal(result.StopName, 'H St + Madison Pl Nw')
+//       done()
+//     })
+//   })
+// })
