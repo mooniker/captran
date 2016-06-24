@@ -2,36 +2,6 @@
 
 const assert = require('chai').assert
 
-// describe('renderUriWithParams helper function', function () {
-//   const renderUriWithParams = require('../wmata').renderUriWithParams
-//
-//   it('should return a nice query string URL', function (done) {
-//     let testBaseUri = 'https://test.test/api'
-//     let secret = 'secret'
-//     assert.equal(renderUriWithParams(testBaseUri, {
-//       'key1': 'value1',
-//       'key2': 'value2',
-//       'key3': 'value3'
-//     }, secret), `${testBaseUri}?key1=value1&key2=value2&key3=value3&api_key=${secret}`)
-//     assert.equal(renderUriWithParams('https://api.wmata.com/Bus.svc/json/jBusPositions', {
-//       Lat: 38.8690011,
-//       Lon: -77.0544217,
-//       Radius: 500
-//     }, 'abcdefg'),
-//     'https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=abcdefg')
-//
-//     done() // why is this needed here but not below?
-//   })
-//   it('should discard params whose value is null', () => {
-//     let testBaseUri = 'https://dev.whatever.test/api'
-//     let secret = 'password123'
-//     assert.equal(renderUriWithParams(testBaseUri, {
-//       'key1': 'value1',
-//       'key2': 'value2',
-//       'key3': null
-//     }, secret), `${testBaseUri}?key1=value1&key2=value2&api_key=${secret}`)
-//   })
-// })
 describe('renderQueryUrl', () => {
   const renderQueryUrl = require('../wmata').renderQueryUrl
 

@@ -14,7 +14,7 @@ try { // look for environment config file on local machine
 
 // API docs say most real-time info is updated every 20 to 30 seconds
 
-const TTL = 25
+const TTL = 30
 
 // dependencies
 const request = require('request-promise')
@@ -35,16 +35,13 @@ const requestUrl = {
 }
 
 // creates query url from given params, including the base url
-const renderQueryUrl = params => {
+const renderQueryUrl = (params, apiKey) => {
   // raise error of parameters isn't an object TODO
   let url = params.url
-  delete params.url
-  if (!params.api_key) {
-    params.api_key = env.WMATA_KEY
-  }
   let query = '?' + Object.keys(params)
+    .filter((key) => key !== 'url') // take out url
     .map((key) => `${key}=${params[key]}`)
-    .join('&')
+    .join('&') + `&api_key=${apiKey || env.WMATA_KEY}`
   return encodeURI(`${url}` + query)
 }
 
