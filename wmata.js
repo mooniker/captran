@@ -22,11 +22,12 @@ const busServicesRequestUrl = 'https://api.wmata.com/Bus.svc/json/'
 const requestUrl = {
   forBus: {
     stops: busServicesRequestUrl + 'jStops',
-    positions: busServicesRequestUrl + 'jBusPositions',
     routeDetails: busServicesRequestUrl + 'jRouteDetails',
     routes: busServicesRequestUrl + 'jRoutes',
     routeSchedule: busServicesRequestUrl + 'jRouteSchedule',
     stopSchedule: busServicesRequestUrl + 'jStopSchedule',
+    // real-time
+    positions: busServicesRequestUrl + 'jBusPositions',
     arrivalPredictions: 'https://api.wmata.com/NextBusService.svc/json/jPredictions'
   }
 }
@@ -45,13 +46,24 @@ const renderUriWithParams = (uri, params, apiKey) => {
   return url
 }
 
+function stampTime(json) {
+  // timestamp the json
+  json.timestamp = new Date().getTime()
+  // bus positions and predicted arrivals are the only real-time data
+  // if json describes real-time info, assign it a time-to-live value
+  if (json.BusPositions || json.StopName) {
+    json.ttl = 25
+  }
+  return json
+}
+
 var limiter = new Bottleneck(10, 1000)
 // var datastore = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
 
 // apiKey set to falsy defaults to environement var
 var callWmata = (endpoint, params, apiKey) => limiter
   .schedule(request, renderUriWithParams(endpoint, params, apiKey))
-  .then(JSON.parse)
+  .then(JSON.parse).then(stampTime)
 
 const busServices = { // API wrapper for bus services
   // # WMATA Bus Route and Stop Methods (JSON)
