@@ -54,79 +54,146 @@ module.exports = {
     // ## Bus Position (real-time)
     positions: {
       // requestUrl: wmata.metrobus.getPositions.requestUrl,
-      all: () => callLocal(wmata.requestUrl.forBus.positions, {}, null, true),
-      near: (params) => callLocal(wmata.requestUrl.forBus.positions, {
-        Lat: params.lat,
-        Lon: params.long,
-        Radius: params.radius
-      }, null, true),
-      nearPentagon: () => callLocal(wmata.requestUrl.forBus.positions, {
+      // all: () => callLocal(wmata.requestUrl.forBus.positions, {}, null, true),
+      all: () => callLocal({
+        url: wmata.requestUrl.forBus.positions
+      }),
+      // near: (params) => callLocal(wmata.requestUrl.forBus.positions, {
+      //   Lat: params.lat,
+      //   Lon: params.long,
+      //   Radius: params.radius
+      // }, null, true),
+      // nearPentagon: () => callLocal(wmata.requestUrl.forBus.positions, {
+      //   Lat: 38.8690011,
+      //   Lon: -77.0544217,
+      //   Radius: 500
+      // }, null, true),
+      nearPentagon: () => callLocal({
+        url: wmata.requestUrl.forBus.positions,
         Lat: 38.8690011,
         Lon: -77.0544217,
         Radius: 500
-      }, null, true),
-      onRoute: (params) => callLocal(wmata.requestUrl.forBus.positions, {
-        RouteID: params.routeId
       }),
-      query: (params) => callLocal(wmata.requestUrl.forBus.positions, params, null, true)
+      // onRoute: (params) => callLocal(wmata.requestUrl.forBus.positions, {
+      //   RouteID: params.routeId
+      // }),
+      // query: (params) => callLocal(wmata.requestUrl.forBus.positions, params, null, true)
+      query: params => {
+        params.url = wmata.requestUrl.forBus.positions
+        return callLocal(params)
+      }
     },
 
     // ## Path Details
-    routeDetails: (params) => callLocal(wmata.requestUrl.forBus.routeDetails, {
-      RouteID: params.routeId,
-      Date: params.date // in YYYY-MM-DD format (optional)
-    }),
+    // routeDetails: (params) => callLocal(wmata.requestUrl.forBus.routeDetails, {
+    //   RouteID: params.routeId,
+    //   Date: params.date // in YYYY-MM-DD format (optional)
+    // }),
+
+    routeDetails: {
+      query: params => {
+        params.url = wmata.requestUrl.forBus.routeDetails
+        return callLocal(params)
+      }
+    },
 
     // ## Routes
 
-    routes: () => callLocal(wmata.requestUrl.forBus.routes),
+    // routes: () => callLocal(wmata.requestUrl.forBus.routes),
+
+    routes: {
+      all: () => callLocal({
+        url: wmata.requestUrl.forBus.routes
+      }),
+      query: () => callLocal({
+        url: wmata.requestUrl.forBus.routes
+      })
+    },
 
     // ## Schedule
 
-    routeSchedule: (params) => callLocal(requestUrl.forBus.routeSchedule, {
-      RouteID: params.routeId,
-      Date: params.date,
-      // if omitted (i.e. null), omit, otherwise convert boolean to string "true" or "false"
-      IncludingVariations: params.includingVariations === null ? null : (includingVariations ? 'true' : 'false')
-      // not sure if WMATA's API considers true or false the default if omitted
-    }),
+    // routeSchedule: (params) => callLocal(requestUrl.forBus.routeSchedule, {
+    //   RouteID: params.routeId,
+    //   Date: params.date,
+    //   // if omitted (i.e. null), omit, otherwise convert boolean to string "true" or "false"
+    //   IncludingVariations: params.includingVariations === null ? null : (includingVariations ? 'true' : 'false')
+    //   // not sure if WMATA's API considers true or false the default if omitted
+    // }),
+
+    routeSchedule: {
+      query: params => {
+        params.url = wmata.requestUrl.forBus.routeSchedule
+        return callLocal(params)
+      }
+    },
 
     // ## Schedule at Stop
 
-    stopSchedule: (params) => callLocal(wmata.requestUrl.forBus.stopSchedule, {
-      StopID: params.stopId,
-      Date: params.date // in YYYY-MM-DD format
-    }),
+    // stopSchedule: (params) => callLocal(wmata.requestUrl.forBus.stopSchedule, {
+    //   StopID: params.stopId,
+    //   Date: params.date // in YYYY-MM-DD format
+    // }),
+
+    stopSchedule: {
+      query: params => {
+        params.url = wmata.requestUrl.forBus.stopSchedule
+        return callLocal(params)
+      }
+    },
 
     // ## Stop Search
 
     stops: {
-      all: () => callLocal(wmata.requestUrl.forBus.stops, {}),
-      near: (params) => callLocal(wmata.requestUrl.forBus.stops, {
-        Lat: params.lat,
-        Lon: params.long,
-        Radius: params.radius
+      // all: () => callLocal(wmata.requestUrl.forBus.stops, {}),
+      all: () => callLocal({
+        url: wmata.requestUrl.forBus.stops
       }),
-      nearPentagon: () => callLocal(wmata.requestUrl.forBus.stops, {
+      // near: (params) => callLocal(wmata.requestUrl.forBus.stops, {
+      //   Lat: params.lat,
+      //   Lon: params.long,
+      //   Radius: params.radius
+      // }),
+      near: params => {
+        params.url = wmata.requestUrl.forBus.stops
+        return callLocal(params)
+      },
+      query: params => {
+        params.url = wmata.requestUrl.forBus.stops
+        return callLocal(params)
+      },
+      nearPentagon: () => callLocal({
+        url: wmata.requestUrl.forBus.stops,
         Lat: 38.8690011,
         Lon: -77.0544217,
-        Radius: 600
+        Radius: 500
       }),
-      query: (params) => callLocal(wmata.requestUrl.forBus.stops, params)
+      // query: (params) => callLocal(wmata.requestUrl.forBus.stops, params)
     },
 
     // # Real-Time Bus Predictions (JSON, real-time)
     // https://developer.wmata.com/docs/services/5476365e031f590f38092508/operations/5476365e031f5909e4fe331d
 
+    // arrivalPredictions: {
+    //   at: stopId => stopId !== '0'
+    //     ? callLocal(wmata.requestUrl.forBus.arrivalPredictions, { StopID: stopId })
+    //     : Promise.reject('Cant look up bus stop without id'),
+    //   query: params => callLocal(wmata.requestUrl.forBus.arrivalPredictions, params),
+    //   atLafeyette: () => callLocal(wmata.requestUrl.forBus.arrivalPredictions, {
+    //     StopID: '1001141'
+    //   })
+    // }
+
     arrivalPredictions: {
-      at: stopId => stopId !== '0'
-        ? callLocal(wmata.requestUrl.forBus.arrivalPredictions, { StopID: stopId })
-        : Promise.reject('Cant look up bus stop without id'),
-      query: params => callLocal(wmata.requestUrl.forBus.arrivalPredictions, params),
-      atLafeyette: () => callLocal(wmata.requestUrl.forBus.arrivalPredictions, {
+      query: params => {
+        params.url = wmata.requestUrl.forBus.arrivalPredictions
+        return params.StopID !== '0' ? callLocal(params) : Promise.reject('cant look up bus stop without id')
+      },
+      atLafeyette: () => callLocal({
+        url: wmata.requestUrl.forBus.arrivalPredictions,
         StopID: '1001141'
       })
     }
+
   }
 
 }

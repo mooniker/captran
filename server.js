@@ -3,8 +3,8 @@
 // This is an example HTTP server for the WMATA API wrapper.
 
 const http = require('http')
-const wmata = require('./wmata')
-// const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
+// const wmata = require('./wmata')
+const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
 
 var server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
