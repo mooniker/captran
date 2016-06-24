@@ -15,10 +15,9 @@ try { // look for environment config file on local machine
 // API docs say most real-time info is updated every 20 to 30 seconds
 
 // dependencies
-const Bottleneck = require('bottleneck')
-const Redis = require('ioredis')
-
 const request = require('request-promise')
+const Bottleneck = require('bottleneck')
+
 const busServicesRequestUrl = 'https://api.wmata.com/Bus.svc/json/'
 const requestUrl = {
   forBus: {
@@ -33,50 +32,26 @@ const requestUrl = {
 }
 
 // helper function to craft request urls with query params for API endpoints
-const renderUriWithParams = (uri, params, apiKey) => encodeURI(
-    `${uri}?` +
-    Object.keys(params).filter((key) =>
-      params[key] !== null).map((key) => `${key}=${params[key]}`).join('&') +
+const renderUriWithParams = (uri, params, apiKey) => {
+  // console.log(uri, params, apiKey)
+  // if (params) console.log('hey')
+  // else console.log('no hey')
+  let url = encodeURI(
+    `${uri}?` + (params ? Object.keys(params).filter((key) =>
+      params[key] !== null).map((key) => `${key}=${params[key]}`).join('&') : '') +
         `&api_key=${apiKey || env.WMATA_KEY}`
   )
-const createDatastoreKey = (endpoint, params) => JSON.stringify({
-  endpoint: endpoint,
-  params: params
-})
+  // console.log(url)
+  return url
+}
 
 var limiter = new Bottleneck(10, 1000)
-var datastore = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
+// var datastore = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
 
+// apiKey set to falsy defaults to environement var
 var callWmata = (endpoint, params, apiKey) => limiter
   .schedule(request, renderUriWithParams(endpoint, params, apiKey))
   .then(JSON.parse)
-
-var updateDatastore = (endpoint, params, apiKey) =>
-  callWmata(endpoint, params, apiKey).then((data) => {
-    // console.log('Updating cache')
-    let key = createDatastoreKey(endpoint, params)
-    datastore.set(key, JSON.stringify(data))
-    datastore.expire(key, 10)
-    return data
-  })
-
-var callLocal = function (endpoint, params, apiKey) {
-  // console.log('callLocal invoked')
-  return new Promise(function (resolve, reject) {
-    // console.log('creating promise for callLocal')
-    let key = createDatastoreKey(endpoint, params)
-    datastore.get(key, function (error, result) {
-      if (error) reject('datastore get error:', error)
-      // else if (result) {
-      //   resolve(result)
-      // } else {
-      //   // console.log('no cache, calling wmata')
-      //   resolve(updateDatastore(endpoint, params, apiKey))
-      // }
-      else resolve(JSON.parse(result) || updateDatastore(endpoint, params, apiKey))
-    })
-  })
-}
 
 const busServices = { // API wrapper for bus services
   // # WMATA Bus Route and Stop Methods (JSON)
@@ -84,36 +59,40 @@ const busServices = { // API wrapper for bus services
 
   // ## Bus Position
 
-  // getAllPositions: () => callWmata(requestUrl.forBus.positions, {}),
-
-  // cache with WMATA call fallback/update version
-  getAllPositions: () => callLocal(requestUrl.forBus.positions, {}),
-
-
-  getPositionsNear: (lat, long, radius) => callWmata(requestUrl.forBus.positions, {
-    Lat: lat,
-    Lon: long,
-    Radius: radius
-  }),
-
-  getPositionsOnRoute: (routeId) => callWmata(requestUrl.forBus.positions, {
-    RouteID: routeId
-  }),
+  positions: {
+    // ping: () => 'pong',
+    // requestUrl: requestUrl.forBus.positions,
+    all: () => callWmata(requestUrl.forBus.positions, {}),
+    near: (params) => callWmata(requestUrl.forBus.positions, {
+      Lat: params.lat,
+      Lon: params.long,
+      Radius: params.radius
+    }),
+    nearPentagon: () => callWmata(requestUrl.forBus.positions, {
+      Lat: 38.8690011,
+      Lon: -77.0544217,
+      Radius: 500
+    }),
+    onRoute: (params) => callWmata(requestUrl.forBus.positions, {
+      RouteID: params.routeId
+    }),
+    query: (params) => callWmata(requestUrl.forBus.positions, params)
+  },
 
   // ## Path Details
 
-  getRouteDetails: (routeId, date) => callWmata(requestUrl.forBus.routeDetails, {
-    RouteID: routeId,
-    Date: date // in YYYY-MM-DD format (optional)
+  routeDetails: (params) => callWmata(requestUrl.forBus.routeDetails, {
+    RouteID: params.routeId,
+    Date: params.date // in YYYY-MM-DD format (optional)
   }),
 
   // ## Routes
 
-  getRoutes: () => callWmata(requestUrl.forBus.routes),
+  routes: () => callWmata(requestUrl.forBus.routes),
 
   // ## Schedule
 
-  getRouteSchedule: (routeId, date, includingVariations) => callWmata(requestUrl.forBus.routeSchedule, {
+  routeSchedule: (routeId, date, includingVariations) => callWmata(requestUrl.forBus.routeSchedule, {
     RouteID: routeId,
     Date: date,
     // if omitted (i.e. null), omit, otherwise convert boolean to string "true" or "false"
@@ -123,37 +102,39 @@ const busServices = { // API wrapper for bus services
 
   // ## Schedule at Stop
 
-  getStopSchedule: (stopId, date) => callWmata(requestUrl.forBus.stopSchedule, {
-    StopID: stopId,
-    Date: date // in YYYY-MM-DD format
+  stopSchedule: (params) => callWmata(requestUrl.forBus.stopSchedule, {
+    StopID: params.stopId,
+    Date: params.date // in YYYY-MM-DD format
   }),
 
   // ## Stop Search
 
-  getAllStops: () => callWmata(requestUrl.forBus.stops, {}),
-
-  getStops: (lat, long, radius) => callWmata(requestUrl.forBus.stops, {
-    Lat: lat,
-    Lon: long,
-    Radius: radius
-  }),
-
-  // hard-coded shortcut for development
-  getPentagonStops: () => callWmata(requestUrl.forBus.stops, {
-    Lat: 38.8690011,
-    Lon: -77.0544217,
-    Radius: 500
-  }),
+  stops: {
+    all: () => callWmata(requestUrl.forBus.stops, {}),
+    near: (params) => callWmata(requestUrl.forBus.stops, {
+      Lat: params.lat,
+      Lon: params.long,
+      Radius: params.radius
+    }),
+    nearPentagon: () => callWmata(requestUrl.forBus.stops, {
+      Lat: 38.8690011,
+      Lon: -77.0544217,
+      Radius: 500
+    }),
+    query: (params) => callWmata(requestUrl.forBus.stops, params)
+  },
 
   // # Real-Time Bus Predictions (JSON)
   // https://developer.wmata.com/docs/services/5476365e031f590f38092508/operations/5476365e031f5909e4fe331d
 
-  getArrivalPredictions: (stopId) => {
-    if (stopId === '0') {
-      let msg = 'Cant look up bus stop without id'
-      console.error(msg)
-      return Promise.reject(msg)
-    } else return callWmata(requestUrl.forBus.arrivalPredictions, { StopID: stopId })
+  arrivalPredictions: {
+    at: stopId => stopId !== '0'
+      ? callWmata(requestUrl.forBus.arrivalPredictions, { StopID: stopId })
+      : Promise.reject('Cant look up bus stop without id'),
+    query: params => callWmata(requestUrl.forBus.arrivalPredictions, params),
+    atLafeyette: () => callWmata(requestUrl.forBus.arrivalPredictions, {
+      StopID: '1001141'
+    })
   }
 }
 
@@ -169,6 +150,10 @@ module.exports = {
 
   ping: () => 'pong',
 
+  call: callWmata,
+
+  requestUrl: requestUrl, // export request URLS for use elsewhere
+
   // WMATA Bus Route and Stop Methods (JSON)
   metrobus: busServices,
 
@@ -176,6 +161,11 @@ module.exports = {
   // metrorail: railService,
 
   // helper function for rendering request URL with query parameters
-  renderUriWithParams: renderUriWithParams // exported for testing
+  renderUriWithParams: renderUriWithParams, // exported for testing
+
+  // returns number of calls queued up due to rate limiting
+  callsQueued: () => limiter.nbQueued(),
+  // returns boolean whether queue is empty
+  checkCallQueue: () => limiter.check()
 
 }

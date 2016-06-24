@@ -4,7 +4,7 @@ const supertest = require('supertest')
 
 var server = require('../server')
 
-describe('server', () => {
+describe('basic http server', () => {
   it('should respond to GET /ping with JSON-packaged "pong"', (done) => supertest(server)
     .get('/ping')
     .set('Accept', 'application/json')
@@ -15,9 +15,4 @@ describe('server', () => {
   it('should respond to GET /foo with 404 error', (done) => supertest(server)
     .get('/foo')
     .expect(404, done))
-
-  // it('should have an API call odometer', (done) => supertest(server)
-  //   .getCallCount()
-  //   .expect()
-  // )
 })

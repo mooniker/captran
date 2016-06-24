@@ -3,7 +3,8 @@
 // This is an example HTTP server for the WMATA API wrapper.
 
 const http = require('http')
-const wmata = require('./wmata') // WMATA API wrapper
+const wmata = require('./wmata')
+const wmataCache = require('./wmata_cache') // WMATA API wrapper (with local caching)
 
 var server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -11,23 +12,38 @@ var server = http.createServer((request, response) => {
     response.end(JSON.stringify(object))
   }
 
-  switch (request.url) {
-    case '/':
+  function respond404 () {
+    response.writeHead(404, {'Content-Type': 'text/html'})
+    response.end('Not found.')
+  }
+
+  let reqUrl = request.url.split('/')
+
+  switch (reqUrl[1]) {
+    case '':
       response.writeHead(200, {'Content-Type': 'text/html'})
       response.end('Hello, world!')
       break
-    case '/ping':
+    case 'ping':
       respondWithJson({ 'body': 'pong' })
       break
-    case '/buses':
-      wmata.metrobus.getAllPositions().then(respondWithJson, console.error)
+    case 'buses':
+      wmataCache.metrobus.positions.all().then(respondWithJson, console.error)
       break
-    case '/pentagon': // bus stops near the Pentagon
-      wmata.metrobus.getPentagonStops().then(respondWithJson, console.error)
+    case 'routes':
+      wmataCache.metrobus.routes().then(respondWithJson, console.error)
       break
-    default:
-      response.writeHead(404, {'Content-Type': 'text/html'})
-      response.end('Not found.')
+    case 'lafeyette':
+      wmata.metrobus.arrivalPredictions.atLafeyette().then(respondWithJson, console.error)
+      break
+    case 'pentagon':
+      if (reqUrl[2] === 'stops')
+        wmataCache.metrobus.stops.nearPentagon().then(respondWithJson, console.error)
+      else if (reqUrl[2] === 'buses')
+        wmataCache.metrobus.positions.nearPentagon().then(respondWithJson, console.error)
+      else respond404()
+      break
+    default: respond404()
   }
 })
 
