@@ -43,6 +43,19 @@ const renderUriWithParams = (uri, params, apiKey) => encodeURI(
       `&api_key=${apiKey || env.WMATA_KEY}`
 )
 
+// creates query url from given params, including the base url
+const renderQueryUrl = params => {
+  let url = params.url
+  delete params.url
+  if (!params.api_key) {
+    params.api_key = env.WMATA_KEY
+  }
+  let query = '?' + Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join('&')
+  return encodeURI(`${url}` + query)
+}
+
 function stampTime(json) {
   // timestamp the json
   json.timestamp = new Date().getTime()
@@ -68,7 +81,7 @@ const busServices = { // API wrapper for bus services
   // ## Bus Position
 
   positions: {
-    all: () => callWmata(requestUrl.forBus.positions, {}),
+    // all: () => callWmata(requestUrl.forBus.positions, {}),
     near: (params) => callWmata(requestUrl.forBus.positions, {
       Lat: params.lat,
       Lon: params.long,
@@ -168,6 +181,7 @@ module.exports = {
 
   // helper function for rendering request URL with query parameters
   renderUriWithParams: renderUriWithParams, // exported for testing
+  renderQueryUrl: renderQueryUrl,
 
   // returns number of calls queued up due to rate limiting
   callsQueued: () => limiter.nbQueued(),

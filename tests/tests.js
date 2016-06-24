@@ -32,6 +32,37 @@ describe('renderUriWithParams helper function', function () {
     }, secret), `${testBaseUri}?key1=value1&key2=value2&api_key=${secret}`)
   })
 })
+describe('renderQueryUrl', () => {
+  const renderQueryUrl = require('../wmata').renderQueryUrl
+
+  it('should return a nice query string URL', function (done) {
+    let params = {
+      url: 'https://test.test/api',
+      key1: 'value1',
+      key2: 'value2',
+      key3: 'value3',
+      api_key: 'secret'
+    }
+    assert.equal(renderQueryUrl(params),
+      `https://test.test/api?key1=value1&key2=value2&key3=value3&api_key=secret`)
+
+    assert.equal(renderQueryUrl({
+      url: 'https://api.wmata.com/Bus.svc/json/jBusPositions',
+      Lat: 38.8690011,
+      Lon: -77.0544217,
+      Radius: 500,
+      api_key: 'abcdefg'
+    }),
+    'https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=abcdefg')
+
+    assert.equal(renderQueryUrl({
+      url: 'https://api.wmata.com/Bus.svc/json/jRoutes',
+      api_key: 'secret'
+    }), 'https://api.wmata.com/Bus.svc/json/jRoutes?api_key=secret')
+
+    done() // why is this needed here but not below?
+  })
+})
 
 const wmata = require('../wmata')
 const wmataCache = require('../wmata_cache')
