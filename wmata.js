@@ -14,6 +14,8 @@ try { // look for environment config file on local machine
 
 // API docs say most real-time info is updated every 20 to 30 seconds
 
+const TTL = 25
+
 // dependencies
 const request = require('request-promise')
 const Bottleneck = require('bottleneck')
@@ -47,7 +49,7 @@ function stampTime(json) {
   // bus positions and predicted arrivals are the only real-time data
   // if json describes real-time info, assign it a time-to-live value
   if (json.BusPositions || json.StopName) {
-    json.ttl = 25
+    json.ttl = TTL
   }
   return json
 }
@@ -66,8 +68,6 @@ const busServices = { // API wrapper for bus services
   // ## Bus Position
 
   positions: {
-    // ping: () => 'pong',
-    // requestUrl: requestUrl.forBus.positions,
     all: () => callWmata(requestUrl.forBus.positions, {}),
     near: (params) => callWmata(requestUrl.forBus.positions, {
       Lat: params.lat,
