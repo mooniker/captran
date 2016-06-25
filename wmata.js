@@ -38,11 +38,12 @@ const requestUrl = {
 const renderQueryUrl = (params, apiKey) => {
   // raise error of parameters isn't an object TODO
   let url = params.url
-  let query = '?' + Object.keys(params)
+  let query = Object.keys(params)
     .filter((key) => key !== 'url') // take out url
     .map((key) => `${key}=${params[key]}`)
-    .join('&') + `&api_key=${apiKey || env.WMATA_KEY}`
-  return encodeURI(`${url}` + query)
+    .join('&')
+  if (query !== '') query += '&'
+  return encodeURI(`${url}?` + query + `api_key=${apiKey || env.WMATA_KEY}`)
 }
 
 function stampTime (json) {

@@ -18,7 +18,7 @@ var cache = new Redis({ keyPrefix: env.REDIS_KEY_PREFIX || '' })
 
 const updateDatastore = params => wmata.call(params).then(data => {
   let key = JSON.stringify(params)
-  console.log(key)
+  // console.log(key)
   cache.set(key, JSON.stringify(data))
   if (data.ttl) {
     cache.expire(key, data.ttl)
