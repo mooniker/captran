@@ -78,8 +78,8 @@ describe('WMATA API cache', () => {
       Promise.all([
         wmata.call(wmata.metrobus.positions.nearPentagon),
         wmataCache.call(wmata.metrobus.positions.nearPentagon),
-        // wmata.call(wmata.metrobus.stops.nearPentagon),
-        // wmataCache.call(wmata.metrobus.stops.nearPentagon)
+        wmata.call(wmata.metrobus.stops.nearPentagon),
+        wmataCache.call(wmata.metrobus.stops.nearPentagon)
       ]).then(results => {
         console.log('RESULTS:', results)
         assert.equal(results[0], results[1])
@@ -96,6 +96,14 @@ describe('WMATA API cache', () => {
     query.StopID = '1001133'
     wmataCache.call(query).then(result => {
       assert.equal(result.StopName, 'Nw H St & 18th St')
+      // done()
+    })
+  })
+  it('should return proper stop name for arrival times at Kościuszko statue (using query maker)', () => {
+    wmataCache.query(wmata.metrobus.arrivalPredictions.query, {
+      StopID: '1001141'
+    }).then(result => {
+      assert.equal(result.StopName, 'H St + Madison Pl Nw')
       // done()
     })
   })

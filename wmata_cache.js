@@ -53,6 +53,20 @@ module.exports = {
 
   call: callLocal,
 
+  query: (queryObj, params) => {
+    if (!params) {
+      callLocal(queryObj)
+    } else {
+      let query = Object.assign({}, queryObj)
+      for (let key in query) {
+        if (query[key] === '') {
+          throw new Error('malformed query, missing param ' + key)
+        }
+      }
+      return callLocal(query)
+    }
+  },
+
   metrobus: wmata.metrobus
 
 }
