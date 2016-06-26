@@ -28,19 +28,19 @@ var server = http.createServer((request, response) => {
       respondWithJson({ 'body': 'pong' })
       break
     case 'buses':
-      wmata.metrobus.positions.all().then(respondWithJson, console.error)
+      wmata.call(wmata.metrobus.positions.all).then(respondWithJson, console.error)
       break
     case 'routes':
-      wmata.metrobus.routes.all().then(respondWithJson, console.error)
+      wmata.call(wmata.metrobus.routes.all).then(respondWithJson, console.error)
       break
     case 'lafeyette':
-      wmata.metrobus.arrivalPredictions.atLafeyette().then(respondWithJson, console.error)
+      wmata.call(wmata.metrobus.arrivalPredictions.atLafeyette).then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
-        wmata.metrobus.stops.nearPentagon().then(respondWithJson, console.error)
+        wmata.call(wmata.metrobus.stops.nearPentagon).then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
-        wmata.metrobus.positions.nearPentagon().then(respondWithJson, console.error)
+        wmata.call(wmata.metrobus.positions.nearPentagon).then(respondWithJson, console.error)
       else respond404()
       break
     default: respond404()

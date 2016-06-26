@@ -48,7 +48,7 @@ describe('WMATA API wrapper', () => {
     done()
   })
   it('should return proper stop name for arrival times near Kościuszko statue', done => {
-    wmata.metrobus.arrivalPredictions.atLafeyette().then(result => {
+    wmata.call(wmata.metrobus.arrivalPredictions.atLafeyette).then(result => {
       assert.equal(result.StopName, 'H St + Madison Pl Nw')
       done()
     })
@@ -74,21 +74,28 @@ describe('WMATA API cache', () => {
   })
   it('should return the same data as a direct call to WMATA API', () => {
     setTimeout(() => {
+      // FIXME
       Promise.all([
-        wmata.metrobus.positions.nearPentagon(),
-        wmataCache.metrobus.positions.nearPentagon(),
-        wmata.metrobus.stops.nearPentagon(),
-        wmataCache.metrobus.stops.nearPentagon()
+        wmata.call(wmata.metrobus.positions.nearPentagon),
+        wmataCache.call(wmata.metrobus.positions.nearPentagon),
+        // wmata.call(wmata.metrobus.stops.nearPentagon),
+        // wmataCache.call(wmata.metrobus.stops.nearPentagon)
       ]).then(results => {
+        console.log('RESULTS:', results)
         assert.equal(results[0], results[1])
         assert.equal(results[2], results[3])
         // done()
+      }, err => {
+        console.log(err)
+        // done()
       })
-    }, 20000)
+    }, 100)
   })
-  it('should return proper stop name for arrival times near Kościuszko statue', () => {
-    wmataCache.metrobus.arrivalPredictions.atLafeyette().then(result => {
-      assert.equal(result.StopName, 'H St + Madison Pl Nw')
+  it('should return proper stop name for arrival times near Murrow Park (Farragut Square)', () => {
+    let query = wmataCache.metrobus.arrivalPredictions.query
+    query.StopID = '1001133'
+    wmataCache.call(query).then(result => {
+      assert.equal(result.StopName, 'Nw H St & 18th St')
       // done()
     })
   })

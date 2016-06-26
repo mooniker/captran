@@ -75,94 +75,103 @@ const busServices = { // API wrapper for bus services
   // ## Bus Position
 
   positions: {
-    // all: () => callWmata(requestUrl.forBus.positions, {}),
-    all: () => callWmata({
-      url: requestUrl.forBus.positions
-    }),
-    nearPentagon: () => callWmata({
+    all: { url: requestUrl.forBus.positions },
+    nearPentagon: {
       url: requestUrl.forBus.positions,
       Lat: 38.8690011,
       Lon: -77.0544217,
       Radius: 500
-    }),
-    query: params => {
-      params.url = requestUrl.forBus.positions
-      return callWmata(params)
+    },
+    near: {
+      url: requestUrl.forBus.positions,
+      Lat: '',
+      Lon: '',
+      Radius: '',
+      RouteID: null
+    },
+    query: {
+      url: requestUrl.forBus.positions,
+      Lat: '',
+      Lon: '',
+      Radius: '',
+      RouteID: null
     }
   },
 
   // ## Path Details
 
   routeDetails: {
-    query: params => {
-      params.url = requestUrl.forBus.routeDetails
-      return callWmata(params)
+    query: {
+      url: requestUrl.forBus.routeDetails,
+      RouteID: '',
+      Date: null
     }
   },
 
   // ## Routes
 
   routes: {
-    all: () => callWmata({
-      url: requestUrl.forBus.routes
-    }),
-    query: () => callWmata({
-      url: requestUrl.forBus.routes
-    })
+    all: { url: requestUrl.forBus.routes }
   },
 
   // ## Schedule
 
   routeSchedule: {
-    query: params => {
-      params.url = requestUrl.forBus.routeSchedule
-      return callWmata(params)
+    query: {
+      url: requestUrl.forBus.routeSchedule,
+      RouteID: '',
+      Date: null
     }
   },
 
   // ## Schedule at Stop
 
   stopSchedule: {
-    query: params => {
-      params.url = requestUrl.forBus.stopSchedule
-      return callWmata(params)
+    query: {
+      url: requestUrl.forBus.stopSchedule,
+      StopID: '',
+      Date: null
     }
   },
 
   // ## Stop Search
 
   stops: {
-    all: () => callWmata({
+    all: {
       url: requestUrl.forBus.stops
-    }),
-    near: params => {
-      params.url = requestUrl.forBus.stops
-      return callWmata(params)
     },
-    query: params => {
-      params.url = requestUrl.forBus.stops
-      return callWmata(params)
+    near: {
+      url: requestUrl.forBus.stops,
+      Lat: '',
+      Lon: '',
+      Radius: ''
     },
-    nearPentagon: () => callWmata({
+    query: {
+      url: requestUrl.forBus.stops,
+      Lat: '',
+      Lon: '',
+      Radius: ''
+    },
+    nearPentagon: {
       url: requestUrl.forBus.stops,
       Lat: 38.8690011,
       Lon: -77.0544217,
       Radius: 500
-    })
+    }
   },
 
   // # Real-Time Bus Predictions (JSON)
   // https://developer.wmata.com/docs/services/5476365e031f590f38092508/operations/5476365e031f5909e4fe331d
 
   arrivalPredictions: {
-    query: params => {
-      params.url = requestUrl.forBus.arrivalPredictions
-      return params.StopID !== '0' ? callWmata(params) : Promise.reject('cant look up bus stop without id')
+    query: {
+      url: requestUrl.forBus.arrivalPredictions,
+      StopID: ''
     },
-    atLafeyette: () => callWmata({
+    atLafeyette: {
       url: requestUrl.forBus.arrivalPredictions,
       StopID: '1001141'
-    })
+    }
   }
 }
 
@@ -179,8 +188,6 @@ module.exports = {
   ping: () => 'pong',
 
   call: callWmata,
-
-  requestUrl: requestUrl, // export request URLS for use elsewhere
 
   // WMATA Bus Route and Stop Methods (JSON)
   metrobus: busServices,
