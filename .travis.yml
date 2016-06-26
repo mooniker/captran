@@ -1,6 +1,9 @@
 language: node_js
 node_js:
-  - "node"
-  - "6"
-  - "5"
-  - "4"
+- node
+- '6'
+- '5'
+- '4'
+env:
+  matrix:
+    secure: iA+DCdPIip1Ag9LM/vcuZ9rtbfu59wS7CahWggWj9keQkzda6laDQb+RsT9mbX5t8dwwnJBEw2AEbXMwz5arLb5DJFlMMiSCDR+bWpQ2D8ZcDxnLE0OagpCK9gIAmPixD+mgJOzhKlWbjWRQLhYZqL+M+ChCJxeed6ec+tahH4lbAemlk/WByQ+Qsno4YDL5sIJu9voGCcO9Rbv5BMVeGGnoJ2yJdtXphRGSIw9oSdO5P1Px8qn9bgZKEGQ8bp5xra39v5BWzrKZYczQB2gINwTqdMOI0G789efabJNrOzz6zHrGlmdbsSMv1Ldty3vfpdO3FeIKcqebnNOF18Q/t09bFebuUw9GN+20T6suzr4+qrQWVYJL55CTpXvlqEm2bzl6tjkC8u0oixnnUyCs4nhy5zO0/ZZ4T2mKMqxPrQMOBOG0gRRkknrDc8ep9q1bmfTp5O/NZ0U1fXOaEiXw3E6RWuQQ6a4G9Rp/sKox5mmnJiZXqUWRQDSmH/mSLMeNiAdLgTBUyWc1ObY+b9VWu/RtSc6wQb/uW2euEwVeEaG1EzjH9jFiO2+cY+qmj/HyLCNjorO3o0mCLVpzXf/t218A21VqvS57Useloi1pJMQK9EHhopJnipXikjLAZfg9/46FWxPAXdfJvcylaZvwyvC0W/uYkeN7G4LWBhIxuTg=
