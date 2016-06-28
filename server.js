@@ -4,9 +4,8 @@
 
 const http = require('http')
 const Primus = require('primus')
-const primusOptions = {
-  transformer: 'engine.io'
-}
+const primusOptions = { transformer: 'engine.io' }
+
 // const wmata = require('./wmata')
 const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
 
@@ -30,6 +29,10 @@ var server = http.createServer((request, response) => {
   var primus = Primus.connect()
   primus.on('open', function() {
     console.log('connected!')
+    setTimeout(function() {
+      console.log('testing')
+      primus.write('routes')
+    }, 1000)
   })
   primus.on('data', function(data) {
     console.log('data:', data)
@@ -69,7 +72,21 @@ var server = http.createServer((request, response) => {
 var primus = new Primus(server, primusOptions)
 
 primus.on('connection', spark => {
-  spark.write('Hello, World!')
+  spark.write({
+    debugLog: `WMATA API callsQued: ${wmata.callsQueued()}`
+  })
+
+  // console.log('connection:', spark.headers, spark.address, spark.id)
+
+  spark.on('data', data => {
+    console.log('received routes req', data)
+    wmata.call(wmata.metrobus.routes.all)
+      // .then(spark.write) // doesnt work, wonder why
+      .then(data => {
+        spark.write(data)
+      })
+  })
 })
+
 
 module.exports = server
