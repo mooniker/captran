@@ -189,6 +189,20 @@ module.exports = {
 
   call: callWmata,
 
+  query: (queryObj, params, call) => {
+    if (!params) {
+      return (call || callWmata)(queryObj)
+    } else {
+      let query = Object.assign({}, queryObj)
+      for (let key in query) {
+        if (query[key] === '') {
+          throw new Error('malformed query, missing param ' + key)
+        }
+      }
+      return (call || callWmata)(query)
+    }
+  },
+
   // WMATA Bus Route and Stop Methods (JSON)
   metrobus: busServices,
 
