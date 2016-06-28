@@ -3,6 +3,10 @@
 // This is an example HTTP server for the WMATA API wrapper.
 
 const http = require('http')
+const Primus = require('primus')
+const primusOptions = {
+  transformer: 'engine.io'
+}
 // const wmata = require('./wmata')
 const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
 
@@ -19,10 +23,25 @@ var server = http.createServer((request, response) => {
 
   let reqUrl = request.url.split('/')
 
+  let indexHtml = `Hello, world!
+  <script src="/primus/primus.js"></script>
+  <script>
+  // connect to current url
+  var primus = Primus.connect()
+  primus.on('open', function() {
+    console.log('connected!')
+  })
+  primus.on('data', function(data) {
+    console.log('data:', data)
+  })
+  </script>
+  `
+
   switch (reqUrl[1]) {
     case '':
       response.writeHead(200, {'Content-Type': 'text/html'})
-      response.end('Hello, world!')
+      // response.end('Hello, world!')
+      response.end(indexHtml)
       break
     case 'ping':
       respondWithJson({ 'body': 'pong' })
@@ -45,6 +64,12 @@ var server = http.createServer((request, response) => {
       break
     default: respond404()
   }
+})
+
+var primus = new Primus(server, primusOptions)
+
+primus.on('connection', spark => {
+  spark.write('Hello, World!')
 })
 
 module.exports = server
