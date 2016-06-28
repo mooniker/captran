@@ -60,6 +60,6 @@ module.exports = {
   // returns number of calls queued up due to rate limiting
   callsQueued: wmata.callsQueued,
   // returns boolean whether queue is empty
-  checkCallQueue: wmata.checkCallQueue()
+  checkCallQueue: wmata.checkCallQueue
 
 }
