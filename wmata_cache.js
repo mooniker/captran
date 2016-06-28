@@ -53,22 +53,13 @@ module.exports = {
 
   call: callLocal,
 
-  // query: (queryObj, params) => {
-  //   if (!params) {
-  //     callLocal(queryObj)
-  //   } else {
-  //     let query = Object.assign({}, queryObj)
-  //     for (let key in query) {
-  //       if (query[key] === '') {
-  //         throw new Error('malformed query, missing param ' + key)
-  //       }
-  //     }
-  //     return callLocal(query)
-  //   }
-  // },
-
   query: (queryObj, params) => wmata.query(queryObj, params, callLocal),
 
-  metrobus: wmata.metrobus
+  metrobus: wmata.metrobus,
+
+  // returns number of calls queued up due to rate limiting
+  callsQueued: wmata.callsQueued,
+  // returns boolean whether queue is empty
+  checkCallQueue: wmata.checkCallQueue()
 
 }
