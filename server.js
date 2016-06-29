@@ -3,11 +3,9 @@
 // This is an example HTTP server for the WMATA API wrapper.
 
 const http = require('http')
-const Primus = require('primus')
-const primusOptions = { transformer: 'engine.io' }
 
-// const wmata = require('./wmata')
-const wmata = require('./wmata_cache') // WMATA API wrapper (with local caching)
+const Wmata = require('./captran-wmata-dev')
+var wmata = new Wmata()
 
 var server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -49,44 +47,43 @@ var server = http.createServer((request, response) => {
     case 'ping':
       respondWithJson({ 'body': 'pong' })
       break
+    case 'busPositions':
     case 'buses':
-      wmata.call(wmata.metrobus.positions.all).then(respondWithJson, console.error)
+      wmata.query({
+        queryType: 'busPositions'
+      }).then(respondWithJson, console.error)
       break
     case 'routes':
-      wmata.call(wmata.metrobus.routes.all).then(respondWithJson, console.error)
+    case 'busRoutes':
+      wmata.query({
+        queryType: 'routes'
+      }).then(respondWithJson, console.error)
       break
     case 'lafeyette':
-      wmata.call(wmata.metrobus.arrivalPredictions.atLafeyette).then(respondWithJson, console.error)
+      wmata.query({
+        queryType: 'stopPredictions',
+        StopID: '1001141'
+      }).then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
-        wmata.call(wmata.metrobus.stops.nearPentagon).then(respondWithJson, console.error)
+        wmata.query({
+          queryType: 'stops',
+          Lat: 38.8690011,
+          Lon: -77.0544217,
+          Radius: 500
+        }).then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
-        wmata.call(wmata.metrobus.positions.nearPentagon).then(respondWithJson, console.error)
+        wmata.query({
+          queryType: 'busPositions',
+          Lat: 38.8690011,
+          Lon: -77.0544217,
+          Radius: 500
+        }).then(respondWithJson, console.error)
       else respond404()
       break
     default: respond404()
   }
 })
-
-var primus = new Primus(server, primusOptions)
-
-primus.on('connection', spark => {
-  spark.write({
-    debugLog: `WMATA API callsQued: ${wmata.callsQueued()}`
-  })
-
-  // console.log('connection:', spark.headers, spark.address, spark.id)
-
-  spark.on('data', data => {
-    console.log('received routes req', data)
-    wmata.call(wmata.metrobus.routes.all)
-      // .then(spark.write) // doesnt work, wonder why
-      .then(data => {
-        spark.write(data)
-      })
-  })
-})
-
 
 module.exports = server

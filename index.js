@@ -1,14 +1,6 @@
 'use strict'
 
-var env
-
-try {
-  env = require('./env')
-} catch (localEnvJsNotPresentException) {
-  env = process.env
-}
-
-const port = env.PORT
+const port = 5000
 
 var server = require('./server')
 
