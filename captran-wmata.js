@@ -99,7 +99,7 @@ module.exports = class Wmata {
         .map(key => `${key}=${params[key]}`)
         .join('&')
       if (query !== '') query += '&'
-      return encodeURI(`${url}?` + query + `api_key=${this.apiKey}`)
+      return encodeURI(`${url}?` + query + `api_key=${apiKey || this.apiKey}`)
     }
 
     query (params, callback) {

@@ -1,7 +1,43 @@
-// 'use strict'
-//
-// const assert = require('chai').assert
-//
+'use strict'
+
+const assert = require('chai').assert
+const Wmata = require('../captran-wmata')
+
+describe('wmata module renderQueryUrl', () => {
+  var wmata = new Wmata()
+  let query = 'stops'
+  let params = {
+    queryType: query,
+    key1: 'value1',
+    key2: 'value2',
+    key3: 'value3'
+  }
+  let testKey = 'abcde'
+
+  it('should return a nice query URL', done => {
+    let expectedBaseUrl = 'https://api.wmata.com/Bus.svc/json/' + 'jStops'
+    assert.equal(wmata.renderQueryUrl(params, testKey),
+      expectedBaseUrl + `?key1=value1&key2=value2&key3=value3&api_key=${testKey}`)
+
+    assert.equal(wmata.renderQueryUrl({
+      queryType: 'busPositions',
+      Lat: 38.8690011,
+      Lon: -77.0544217,
+      Radius: 500
+    }, testKey),
+    `https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=${testKey}`)
+
+    done()
+  })
+
+  it('should render query URLs that have no parameters (except API key)', done => {
+    assert.equal(wmata.renderQueryUrl({
+      queryType: 'routes'
+    }, testKey), `https://api.wmata.com/Bus.svc/json/jRoutes?api_key=${testKey}`)
+    done()
+  })
+})
+
 // describe('renderQueryUrl', () => {
 //   const renderQueryUrl = require('../wmata').renderQueryUrl
 //   let apiKey = 'secret'
