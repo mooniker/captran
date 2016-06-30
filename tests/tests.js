@@ -2,9 +2,9 @@
 
 const assert = require('chai').assert
 const Wmata = require('../captran-wmata')
+var wmata = new Wmata()
 
-describe('wmata module renderQueryUrl', () => {
-  var wmata = new Wmata()
+describe('WMATA wrapper class\'s renderQueryUrl method', () => {
   let query = 'stops'
   let params = {
     queryType: query,
@@ -47,38 +47,22 @@ describe('wmata module renderQueryUrl', () => {
   })
 })
 
-// describe('renderQueryUrl', () => {
-//   const renderQueryUrl = require('../wmata').renderQueryUrl
-//   let apiKey = 'secret'
-//
-//   it('should return a nice query string URL', done => {
-//     let params = {
-//       url: 'https://test.test/api',
-//       key1: 'value1',
-//       key2: 'value2',
-//       key3: 'value3'
-//     }
-//     assert.equal(renderQueryUrl(params, apiKey),
-//       `https://test.test/api?key1=value1&key2=value2&key3=value3&api_key=secret`)
-//
-//     assert.equal(renderQueryUrl({
-//       url: 'https://api.wmata.com/Bus.svc/json/jBusPositions',
-//       Lat: 38.8690011,
-//       Lon: -77.0544217,
-//       Radius: 500
-//     }, apiKey),
-//     'https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=secret')
-//
-//     done() // why is this needed here but not below?
-//   })
-//   it('should render query URLs that have no parameters (except API key)', (done) => {
-//     assert.equal(renderQueryUrl({
-//       url: 'https://api.wmata.com/Bus.svc/json/jRoutes'
-//     }, apiKey), 'https://api.wmata.com/Bus.svc/json/jRoutes?api_key=secret')
-//     done()
-//   })
-// })
-//
+describe('WMATA API wrapper class\'s addTimestamp method', () => {
+  it('should add a timestamp to an object', done => {
+    let timeless = wmata.addTimestamp({})
+    let now = Date.now()
+    assert.isAtLeast(timeless.timestamp, now - 20)
+    assert.isAtMost(timeless.timestamp, now + 200)
+    done()
+  })
+  it(`should add a time-to-live (TTL, i.e. expiration) to an object whose queryType is ${Wmata.REAL_TIME_QUERIES[0]}`, done => {
+    let timed = wmata.addTimestamp({ [Wmata.REAL_TIME_QUERIES[0]]: 'stuff' })
+    assert.isOk(timed.ttl)
+    assert.equal(timed.ttl, Wmata.TTL)
+    done()
+  })
+})
+
 // const wmata = require('../wmata')
 // const wmataCache = require('../wmata_cache')
 //
