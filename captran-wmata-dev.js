@@ -1,3 +1,5 @@
+'use strict'
+
 const Wmata = require('./captran-wmata')
 
 // shortcut query params for dev
