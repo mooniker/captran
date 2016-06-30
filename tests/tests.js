@@ -18,15 +18,13 @@ describe('WMATA wrapper class\'s renderQueryUrl method', () => {
     let expectedBaseUrl = 'https://api.wmata.com/Bus.svc/json/' + 'jStops'
     assert.equal(wmata.renderQueryUrl(params, testKey),
       expectedBaseUrl + `?key1=value1&key2=value2&key3=value3&api_key=${testKey}`)
-
     assert.equal(wmata.renderQueryUrl({
       queryType: 'busPositions',
       Lat: 38.8690011,
       Lon: -77.0544217,
       Radius: 500
     }, testKey),
-    `https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=${testKey}`)
-
+      `https://api.wmata.com/Bus.svc/json/jBusPositions?Lat=38.8690011&Lon=-77.0544217&Radius=500&api_key=${testKey}`)
     done()
   })
 
@@ -55,7 +53,7 @@ describe('WMATA API wrapper class\'s addTimestamp method', () => {
     assert.isAtMost(timeless.timestamp, now + 200)
     done()
   })
-  it(`should add a time-to-live (TTL, i.e. expiration) to an object whose queryType is ${Wmata.REAL_TIME_QUERIES[0]}`, done => {
+  it(`should add a time-to-live (TTL, i.e. expiration age) to an object that has real-time data content (such as ${Wmata.REAL_TIME_QUERIES[0]})`, done => {
     let timed = wmata.addTimestamp({ [Wmata.REAL_TIME_QUERIES[0]]: 'stuff' })
     assert.isOk(timed.ttl)
     assert.equal(timed.ttl, Wmata.TTL)
