@@ -94,6 +94,9 @@ module.exports = class Wmata {
 
     renderQueryUrl (params, apiKey) {
       let url = this.constructor.QUERIES[params.queryType]
+      if (!url) {
+        throw new Error(`Ohnoes, ${params.queryType} isn't a valid queryType`)
+      }
       let query = Object.keys(params)
         .filter(key => key !== 'queryType')
         .map(key => `${key}=${params[key]}`)

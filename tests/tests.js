@@ -36,6 +36,15 @@ describe('wmata module renderQueryUrl', () => {
     }, testKey), `https://api.wmata.com/Bus.svc/json/jRoutes?api_key=${testKey}`)
     done()
   })
+
+  it('should throw an error if passed an invalid query param', done => {
+    assert.throws(function() {
+      wmata.renderQueryUrl({
+        queryType: 'ruotes'
+      }, testKey)
+    }, /Ohnoes/)
+    done()
+  })
 })
 
 // describe('renderQueryUrl', () => {
