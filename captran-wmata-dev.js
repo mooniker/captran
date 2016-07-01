@@ -6,13 +6,13 @@ const Wmata = require('./captran-wmata')
 
 const pentagon = {
   busesNearby: {
-    queryType: 'busPositions',
+    api: 'busPositions',
     Lat: 38.8690011,
     Lon: -77.0544217,
     Radius: 500
   },
   stopsNearby: {
-    queryType: 'stops',
+    api: 'stops',
     Lat: 38.8690011,
     Lon: -77.0544217,
     Radius: 500
@@ -20,13 +20,13 @@ const pentagon = {
 }
 const lafeyette = {
   busPredictions: {
-    queryType: 'stopPredictions',
+    api: 'stopPredictions',
     StopID: '1001141'
   }
 }
 const farragutMurrow = {
   busPredictions: {
-    queryType: 'stopPredictions',
+    api: 'stopPredictions',
     StopID: '1001133'
   }
 }

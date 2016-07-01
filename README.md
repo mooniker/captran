@@ -2,12 +2,14 @@
 
 Captran is a Node.js wrapper for [the Washington Metropolitan Area Transit Authority (WMATA) API](https://developer.wmata.com/). Extra features include call throttling/scheduling to avoid [429'ing](https://httpstatuses.com/429) on WMATA's server and caching for performance.
 
+The `captran-wmata` module is a thin wrapper. Refer to [the WMATA documentation](https://developer.wmata.com/docs/services/) and pass any required or optional parameters as an object, but indicate the API endpoint with a keyword as an `api` property.
+
 ```js
 const Wmata = require('./captran-wmata')
 var wmata = new Wmata()
 
 wmata.query({
-  queryType: 'busPositions'
+  api: 'busPositions'
 }).then(console.log)
 ```
 

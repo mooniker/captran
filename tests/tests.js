@@ -7,7 +7,7 @@ var wmata = new Wmata()
 describe('WMATA wrapper class\'s renderQueryUrl method', () => {
   let query = 'stops'
   let params = {
-    queryType: query,
+    api: query,
     key1: 'value1',
     key2: 'value2',
     key3: 'value3'
@@ -19,7 +19,7 @@ describe('WMATA wrapper class\'s renderQueryUrl method', () => {
     assert.equal(wmata.renderQueryUrl(params, testKey),
       expectedBaseUrl + `?key1=value1&key2=value2&key3=value3&api_key=${testKey}`)
     assert.equal(wmata.renderQueryUrl({
-      queryType: 'busPositions',
+      api: 'busPositions',
       Lat: 38.8690011,
       Lon: -77.0544217,
       Radius: 500
@@ -30,7 +30,7 @@ describe('WMATA wrapper class\'s renderQueryUrl method', () => {
 
   it('should render query URLs that have no parameters (except API key)', done => {
     assert.equal(wmata.renderQueryUrl({
-      queryType: 'routes'
+      api: 'routes'
     }, testKey), `https://api.wmata.com/Bus.svc/json/jRoutes?api_key=${testKey}`)
     done()
   })
@@ -38,7 +38,7 @@ describe('WMATA wrapper class\'s renderQueryUrl method', () => {
   it('should throw an error if passed an invalid query param', done => {
     assert.throws(function() {
       wmata.renderQueryUrl({
-        queryType: 'ruotes'
+        api: 'ruotes'
       }, testKey)
     }, /Ohnoes/)
     done()
@@ -65,7 +65,7 @@ describe('WMATA API wrapper class\'s addTimestamp method', () => {
 describe('WMATA API wrapper', () => {
   it('should return proper stop name for bus arrival predictions near Kościuszko statue', done => {
     wmata.query({
-      queryType: 'stopPredictions',
+      api: 'stopPredictions',
       StopID: '1001141'
     }).then(result => {
       assert.equal(result.StopName, 'H St + Madison Pl Nw')

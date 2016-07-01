@@ -99,12 +99,12 @@ module.exports = class Wmata {
     }
 
     renderQueryUrl (params, apiKey) {
-      let url = this.constructor.QUERIES[params.queryType]
+      let url = this.constructor.QUERIES[params.api]
       if (!url) {
-        throw new Error(`Ohnoes, ${params.queryType} isn't a valid queryType`)
+        throw new Error(`Ohnoes, ${params.api} isn't a valid api`)
       }
       let query = Object.keys(params)
-        .filter(key => key !== 'queryType')
+        .filter(key => key !== 'api')
         .map(key => `${key}=${params[key]}`)
         .join('&')
       if (query !== '') query += '&'
@@ -112,7 +112,7 @@ module.exports = class Wmata {
     }
 
     query (params, callback) {
-      if (typeof(params) !== 'object' || !params.queryType)
+      if (typeof(params) !== 'object' || !params.api)
         throw new Error(`Ohnoes, invalid query params: ${params}`)
       return callback // if
         ? this.limiter.submit( // returns true if successful, invokes callback
@@ -128,7 +128,7 @@ module.exports = class Wmata {
 
     queryBusPositions (callback) { // shortcut
       return this.query({
-        queryType: 'busPositions'
+        api: 'busPositions'
       })
     }
 

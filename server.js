@@ -52,32 +52,32 @@ var server = http.createServer((request, response) => {
     case 'busPositions':
     case 'buses':
       captran.query({
-        queryType: 'busPositions'
+        api: 'busPositions'
       }).then(respondWithJson, console.error)
       break
     case 'routes':
     case 'busRoutes':
       captran.query({
-        queryType: 'routes'
+        api: 'routes'
       }).then(respondWithJson, console.error)
       break
     case 'lafeyette':
       captran.query({
-        queryType: 'stopPredictions',
+        api: 'stopPredictions',
         StopID: '1001141'
       }).then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
         captran.query({
-          queryType: 'stops',
+          api: 'stops',
           Lat: 38.8690011,
           Lon: -77.0544217,
           Radius: 500
         }).then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
         captran.query({
-          queryType: 'busPositions',
+          api: 'busPositions',
           Lat: 38.8690011,
           Lon: -77.0544217,
           Radius: 500
