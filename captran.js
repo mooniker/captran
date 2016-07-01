@@ -17,10 +17,10 @@ module.exports = class Captran {
   remember (params, json, callback) {
     let key = JSON.stringify(params)
     if (this.debugMode) json.captranDebug.cached = true
-    this.dataCache.set(key, JSON.stringify(json))
+    this.dataCache.set(key, JSON.stringify(json)).catch(e => console.error)
     json.ttl
-      ? this.dataCache.expire(key, json.ttl)
-      : this.dataCache.expire(key, 60 * 60 * 2) // two hours
+      ? this.dataCache.expire(key, json.ttl).catch(e => console.error)
+      : this.dataCache.expire(key, 60 * 60 * 2).catch(e => console.error)
     return callback // if
       ? callback(null, json)
       : Promise.resolve(json)
