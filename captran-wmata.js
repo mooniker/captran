@@ -59,6 +59,8 @@ const QUERY_TYPE = {
   stationPredictions: BASE_URL + 'StationPrediction.svc/json/GetPrediction/All'
 }
 
+const AUTH_TOKEN_FIELD = 'api_key'
+
 // dependencies
 const request = require('request')
 const requestPromise = require('request-promise')
@@ -108,7 +110,7 @@ module.exports = class Wmata {
         .map(key => `${key}=${params[key]}`)
         .join('&')
       if (query !== '') query += '&'
-      return encodeURI(`${url}?` + query + `api_key=${apiKey || this.apiKey}`)
+      return encodeURI(`${url}?` + query + `${AUTH_TOKEN_FIELD}=${apiKey || this.apiKey}`)
     }
 
     query (params, callback) {
