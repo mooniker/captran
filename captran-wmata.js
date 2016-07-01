@@ -72,6 +72,7 @@ module.exports = class Wmata {
       this.apiKey = options.wmataKey || DEMO_KEY
       this.limiter = new Bottleneck(MAX_CALLS_PER, INTERVAL)
       this.ttl = options.ttl || this.constructor.TTL
+      this.debugMode = options.debugMode || true // defaults to true
     }
 
     static get QUERIES () { return QUERY_TYPE }
@@ -86,8 +87,13 @@ module.exports = class Wmata {
           break
         }
       }
-      responseJson.captran = {
-        queryQueueLength: this.queryQueueLength
+      if (this.debugMode) {
+        responseJson.captranDebug = {
+          debugMode: this.debugMode,
+          queryQueueLength: this.queryQueueLength,
+          timestamp: responseJson.timestamp,
+          ttl: responseJson.ttl
+        }
       }
       return responseJson
     }
@@ -106,6 +112,8 @@ module.exports = class Wmata {
     }
 
     query (params, callback) {
+      if (typeof(params) !== 'object' || !params.queryType)
+        throw new Error(`Ohnoes, invalid query params: ${params}`)
       return callback // if
         ? this.limiter.submit( // returns true if successful, invokes callback
           request,
