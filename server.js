@@ -4,8 +4,10 @@
 
 const http = require('http')
 
-const Wmata = require('./captran-wmata-dev')
-var wmata = new Wmata()
+// const Wmata = require('./captran-wmata-dev')
+// var wmata = new Wmata()
+const CapTran = require('./captran')
+var captran = new CapTran()
 
 var server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -49,32 +51,32 @@ var server = http.createServer((request, response) => {
       break
     case 'busPositions':
     case 'buses':
-      wmata.query({
+      captran.query({
         queryType: 'busPositions'
       }).then(respondWithJson, console.error)
       break
     case 'routes':
     case 'busRoutes':
-      wmata.query({
+      captran.query({
         queryType: 'routes'
       }).then(respondWithJson, console.error)
       break
     case 'lafeyette':
-      wmata.query({
+      captran.query({
         queryType: 'stopPredictions',
         StopID: '1001141'
       }).then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
-        wmata.query({
+        captran.query({
           queryType: 'stops',
           Lat: 38.8690011,
           Lon: -77.0544217,
           Radius: 500
         }).then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
-        wmata.query({
+        captran.query({
           queryType: 'busPositions',
           Lat: 38.8690011,
           Lon: -77.0544217,
