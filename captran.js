@@ -1,3 +1,5 @@
+'use strict'
+
 const Wmata = require('./captran-wmata')
 const Redis = require('ioredis')
 
