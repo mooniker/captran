@@ -61,6 +61,19 @@ describe('WMATA API wrapper class\'s addTimestamp method', () => {
   })
 })
 
+// requires network
+describe('WMATA API wrapper', () => {
+  it('should return proper stop name for bus arrival predictions near Kościuszko statue', done => {
+    wmata.query({
+      queryType: 'stopPredictions',
+      StopID: '1001141'
+    }).then(result => {
+      assert.equal(result.StopName, 'H St + Madison Pl Nw')
+      done()
+    })
+  })
+})
+
 // const wmata = require('../wmata')
 // const wmataCache = require('../wmata_cache')
 //
