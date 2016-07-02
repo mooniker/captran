@@ -36,7 +36,7 @@ describe('WMATA wrapper class\'s renderQueryUrl method', () => {
   })
 
   it('should throw an error if passed an invalid query param', done => {
-    assert.throws(function() {
+    assert.throws(() => {
       wmata.renderQueryUrl({
         api: 'ruotes'
       }, testKey)
@@ -72,6 +72,30 @@ describe('WMATA API wrapper', () => {
       done()
     })
   })
+  it("should run the readme's example code flawlessly", done => {
+    wmata.query({
+      api: 'busPositions'
+    }).then(result => {
+      assert.isOk(result.BusPositions)
+      assert.equal(typeof (result.BusPositions), 'object')
+      assert.isOk(result.BusPositions[0].VehicleID)
+      assert.isAtLeast(result.BusPositions.length, 1)
+      done()
+    })
+  })
+  // TODO this test fails probably because the callback versions haven't been properly debugged yet
+  // it("should run the readme's example code flawlessly using callbacks instead of promises", done => {
+  //   wmata.query({ api: 'busPositions' }, (error, result) => {
+  //     if (error) console.error(error)
+  //     else {
+  //       assert.isOk(result.BusPositions)
+  //       assert.equal(typeof (result.BusPositions), 'object')
+  //       assert.isOk(result.BusPositions[0].VehicleID)
+  //       assert.isAtLeast(result.BusPositions.length, 1)
+  //     }
+  //     done()
+  //   })
+  // })
 })
 
 // const wmata = require('../wmata')
