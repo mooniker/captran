@@ -17,6 +17,10 @@ let wmata = new Wmata({ apiKey: ENV.WMATA_KEY, debugMode: true })
 // var captran = new CapTran()
 const RideOn = require('./captran-rideon')
 let rideon = new RideOn({ apiKey: ENV.RIDEON_KEY, debugMode: true })
+const Gbfs = require('./captran-gbfs')
+let cabi = new Gbfs({
+  gbfsUrl: 'https://gbfs.capitalbikeshare.com/gbfs/gbfs.json'
+})
 
 let server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -97,6 +101,10 @@ let server = http.createServer((request, response) => {
       rideon.query({
         api: 'vehiclePositions'
       }).then(respondWithJson, console.error)
+      break
+    case 'wh':
+      cabi.getStationsNear('en', 38.8977, -77.0365, 1)
+        .then(respondWithJson, console.error)
       break
     default: respond404()
   }
