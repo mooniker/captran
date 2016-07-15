@@ -53,10 +53,10 @@ describe('WMATA API wrapper class\'s addTimestamp method', () => {
     assert.isAtMost(timeless.timestamp, now + 200)
     done()
   })
-  it(`should add a time-to-live (TTL, i.e. expiration age) to an object that has real-time data content (such as ${Wmata.REAL_TIME_QUERIES[0]})`, done => {
-    let timed = wmata.addTimestamp({ [Wmata.REAL_TIME_QUERIES[0]]: 'stuff' })
-    assert.isOk(timed.ttl)
-    assert.equal(timed.ttl, Wmata.TTL)
+  it(`should add a time-to-live (TTL, i.e. expiration age) to JSON data that has real-time data content (such as ${wmata.realTimeFeeds[0]})`, done => {
+    let ttlTest = wmata.addTimestamp({ [wmata.realTimeFeeds[0]]: 'stuff' })
+    assert.isOk(ttlTest.ttl)
+    assert.equal(ttlTest.ttl, wmata.ttl)
     done()
   })
 })
