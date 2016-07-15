@@ -1,7 +1,14 @@
 'use strict'
 
-const port = 5000
+let ENV
+try { // look for local environment variable file first
+  ENV = require('./env')
+} catch (LocalEnvFileNotFound) {
+  ENV = process.env
+}
 
-var server = require('./server')
+const PORT = ENV.PORT || 5000
 
-server.listen(port, () => console.log('Server is up on port %d.', port))
+let server = require('./server')
+
+server.listen(PORT, () => console.log('Server is up on port %d.', PORT))
