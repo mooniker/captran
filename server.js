@@ -74,6 +74,12 @@ let server = http.createServer((request, response) => {
         api: 'routes'
       }).then(respondWithJson, console.error)
       break
+    case 'route':
+      wmata.query({
+        api: 'routeDetails',
+        RouteID: '7Y'
+      }).then(respondWithJson, console.error)
+      break
     case 'lafeyette':
       wmata.query({
         api: 'stopPredictions',
