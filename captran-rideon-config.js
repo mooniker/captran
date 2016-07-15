@@ -4,14 +4,11 @@ const BASE_URL = 'http://rideonrealtime.net/'
 const FORMAT = '.json'
 
 module.exports = {
-  WRAPPER_NAME: 'MoCo Ride On',
+  WRAPPER_NAME: 'MoCo (Md.) Ride On',
 
   // using WMATA's contraints for now
   MAX_CALLS_PER: 10, // cap for concurrent calls within INTERVAL
-  INTERVAL: 1000, // in millaseconds
-
-  // API docs say real-time info is updated every 20 to 30 seconds
-
+  INTERVAL: 1000, // in milliseconds
   TIME_TO_LIVE: 25, // time-to-live default expiration in seconds for real-time info
 
   REAL_TIME_FEEDS: [

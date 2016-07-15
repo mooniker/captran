@@ -4,12 +4,21 @@
 
 const http = require('http')
 
-// const Wmata = require('./captran-wmata-dev')
-// var wmata = new Wmata()
-const CapTran = require('./captran')
-var captran = new CapTran()
+let ENV
+try { // look for local environment variable file first
+  ENV = require('./env')
+} catch (LocalEnvFileNotFound) {
+  ENV = process.env
+}
 
-var server = http.createServer((request, response) => {
+const Wmata = require('./captran-wmata-dev')
+let wmata = new Wmata({ apiKey: ENV.WMATA_KEY, debugMode: true })
+// const CapTran = require('./captran')
+// var captran = new CapTran()
+const RideOn = require('./captran-rideon')
+let rideon = new RideOn({ apiKey: ENV.RIDEON_KEY, debugMode: true })
+
+let server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
     response.writeHead(200, {'Content-Type': 'application/json'})
     response.end(JSON.stringify(object))
@@ -51,38 +60,43 @@ var server = http.createServer((request, response) => {
       break
     case 'busPositions':
     case 'buses':
-      captran.query({
+      wmata.query({
         api: 'busPositions'
       }).then(respondWithJson, console.error)
       break
     case 'routes':
     case 'busRoutes':
-      captran.query({
+      wmata.query({
         api: 'routes'
       }).then(respondWithJson, console.error)
       break
     case 'lafeyette':
-      captran.query({
+      wmata.query({
         api: 'stopPredictions',
         StopID: '1001141'
       }).then(respondWithJson, console.error)
       break
     case 'pentagon':
       if (reqUrl[2] === 'stops')
-        captran.query({
+        wmata.query({
           api: 'stops',
           Lat: 38.8690011,
           Lon: -77.0544217,
           Radius: 500
         }).then(respondWithJson, console.error)
       else if (reqUrl[2] === 'buses')
-        captran.query({
+        wmata.query({
           api: 'busPositions',
           Lat: 38.8690011,
           Lon: -77.0544217,
           Radius: 500
         }).then(respondWithJson, console.error)
       else respond404()
+      break
+    case 'rideon':
+      rideon.query({
+        api: 'vehiclePositions'
+      }).then(respondWithJson, console.error)
       break
     default: respond404()
   }

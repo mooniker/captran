@@ -13,6 +13,12 @@ module.exports = class WmataWrapper {
       if (!options) {
         options = {}
         console.log(`Using defaults for ${this.config.WRAPPER_NAME} APIs.`)
+      } else if (options.debugMode) {
+        let optionsCopy = Object.assign({}, options)
+        if (optionsCopy.apiKey) {
+          optionsCopy.apiKey = '[...]'
+        }
+        console.log(`${this.config.WRAPPER_NAME} wrapper init options:`, optionsCopy)
       }
       this.API_KEY = options.apiKey || this.config.DEMO_KEY
       this.debugMode = options.debugMode || false
