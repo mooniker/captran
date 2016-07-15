@@ -10,18 +10,15 @@ module.exports = class WmataWrapper {
       // config contains API/endpoint-specific configuration settings
       this.set(config) // set given config to this.config
       // options includes the API key and optional behaviors
-      if (options) {
-        this.API_KEY = options.apiKey || this.config.DEMO_KEY
-        this.debugMode = options.debugMode
-        this.ttl = options.ttl || this.config.TIME_TO_LIVE
-      } else {
-        this.API_KEY = this.config.DEMO_KEY
-        this.ttl = this.config.TIME_TO_LIVE
+      if (!options) {
+        options = {}
         console.log(`Using defaults for ${this.config.WRAPPER_NAME} APIs.`)
       }
-      console.log('TTL', this.ttl, this.config)
+      this.API_KEY = options.apiKey || this.config.DEMO_KEY
+      this.debugMode = options.debugMode || false
+      this.ttl = options.ttl || this.config.TIME_TO_LIVE
       if (!this.API_KEY) {
-        console.error('API key not supplied.')
+        console.error(`${this.config.WRAPPER_NAME} API key not supplied.`)
       }
       this.limiter = new Bottleneck(this.config.MAX_CALLS_PER, this.config.INTERVAL)
     }
