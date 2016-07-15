@@ -131,7 +131,11 @@ module.exports = class Gbfs {
       let nearbyStations = stationsData.data.filter(station => {
         return calcDistanceBetweenLatLongs(lat, lon, station.lat, station.lon) <= radius
       })
-      return nearbyStations
+      return {
+        last_updated: stationsData.last_updated,
+        ttl: stationsData.ttl,
+        data: nearbyStations
+      }
     })
   }
 
