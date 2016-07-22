@@ -4,25 +4,12 @@ const request = require('request')
 const requestPromise = require('request-promise')
 const _ = require('lodash')
 
-// gbfs.json	Optional	Auto-discovery file that links to all of the other files published by the system. This file is optional, but highly recommended.
-// system_information.json	Yes	Describes the system including System operator, System location, year implemented, URLs, contact info, time zone
-// station_information.json	Yes	Mostly static list of all stations, their capacities and locations
-// station_status.json	Yes	Number of available bikes and docks at each station and station availability
-// free_bike_status.json	Optional	Describes bikes that are available in non station-based systems
-// system_hours.json	Optional	Describes the hours of operation for the system
-// system_calendar.json	Optional	Describes the days of operation for the system
-// system_regions.json	Optional	Describes the regions the system is broken up into
-// system_pricing_plans.json	Optional	Describes the system pricing
-// system_alerts.json	Optional	Describes current system alerts
-
 const request200 = (url, callback) => {
   return callback // if callback supplied, return a request invokes that callback
     ? request(url, (error, response, body) => {
       if (error || response.statusCode !== 200) {
         callback(error || new Error(response.statusCode))
-      } else {
-        callback(null, JSON.parse(body))
-      }
+      } else callback(null, JSON.parse(body))
     }) // if callback not supplied, return a promise
     : requestPromise(url, (error, response, body) => {
       if (error || response.statusCode !== 200) throw error || new Error(response.statusCode)
@@ -44,6 +31,7 @@ module.exports = class Gbfs {
     this.files = undefined
     if (config.gbfsUrl) {
       this.gbfsUrl = config.gbfsUrl
+      this.lang = config.lang || 'en'
     } else throw new Error('GBFS.json URL not specified.')
     console.log('created', config)
   }
@@ -61,17 +49,17 @@ module.exports = class Gbfs {
     }
   }
 
-  getFile (lang, fileName, callback) {
+  getFile (fileName, callback) {
     let getUrlForFile = gbfs => {
+      let lang = this.lang || 'en'
       let feeds = gbfs.data[lang].feeds
-      let url
-      url = feeds.filter(feed => feed.name === fileName)[0].url
+      let url = feeds.filter(feed => feed.name === fileName)[0].url
       if (url) {
         return url
       } else {
         console.error(lang, fileName, 'not found in', feeds)
       }
-      return null
+      return null // error
     }
     if (callback) {
       this.gbfs().then(gbfs => {
@@ -83,14 +71,14 @@ module.exports = class Gbfs {
   }
 
   // Shortcuts for GBFS required files
-  getSystemInfo (lang, callback) {
-    return this.getFile(lang, 'system_information', callback)
+  getSystemInfo (callback) {
+    return this.getFile('system_information', callback)
   }
-  getStationInfo (lang, callback) {
-    return this.getFile(lang, 'station_information', callback)
+  getStationInfo (callback) {
+    return this.getFile('station_information', callback)
   }
-  getStationStatus (lang, callback) {
-    return this.getFile(lang, 'station_status', callback)
+  getStationStatus (callback) {
+    return this.getFile('station_status', callback)
   }
 
   dir () {
@@ -108,13 +96,14 @@ module.exports = class Gbfs {
     })
   }
 
-  stations (lang, xcallback) {
+  getStations (xcallback) {
     return Promise.all([
-      this.getFile(lang, 'station_information'),
-      this.getFile(lang, 'station_status')
+      this.getFile('station_information'),
+      this.getFile('station_status')
     ]).then(results => {
       let stationInfos = results[0].data.stations
       let statuses = results[1].data.stations
+      // last_updated and ttl should be the older of the the two files
       let lastUpdated = results[0].last_updated < results[1].last_updated ? results[0].last_updated : results[1].last_updated
       let ttl = results[0].ttl < results[1].ttl ? results[0].ttl : results[1].ttl
       let mergedStationsData = _.map(stationInfos, item => _.extend(item, _.find(statuses, { station_id: item.station_id })))
@@ -126,8 +115,8 @@ module.exports = class Gbfs {
     })
   }
 
-  getStationsNear (lang, lat, lon, radius, xcallback) {
-    return this.stations(lang).then(stationsData => {
+  getStationsNear (lat, lon, radius, xcallback) {
+    return this.getStations().then(stationsData => {
       let nearbyStations = stationsData.data.filter(station => {
         return calcDistanceBetweenLatLongs(lat, lon, station.lat, station.lon) <= radius
       })
