@@ -21,6 +21,18 @@ const Gbfs = require('./captran-gbfs')
 let cabi = new Gbfs({
   gbfsUrl: 'https://gbfs.capitalbikeshare.com/gbfs/gbfs.json'
 })
+//
+// const Transit = require('transportation')
+// let transit = new Transit()
+//
+// const wmataGtfsUrl = 'https://lrg.wmata.com/GTFS_data'
+//
+// // import GTFS data
+// transit.importGTFS(wmataGtfsUrl, function (err) {
+//   // have a look at the Transit instance
+//   if (err) console.error(err)
+//   else console.log(transit)
+// })
 
 let server = http.createServer((request, response) => {
   const respondWithJson = (object) => {
@@ -112,6 +124,9 @@ let server = http.createServer((request, response) => {
       cabi.getStationsNear('en', 38.8977, -77.0365, 1)
         .then(respondWithJson, console.error)
       break
+    // case 'transit':
+    //   respondWithJson(JSON.parse(transit))
+    //   break
     default: respond404()
   }
 })
