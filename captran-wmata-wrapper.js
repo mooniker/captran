@@ -37,7 +37,8 @@ module.exports = class WmataWrapper {
     get feed () { return this.config.FEEDS }
 
     addTimestamp (responseJson) {
-      responseJson.timestamp = Date.now()
+      let now = Date.now()
+      responseJson.last_updated = now
       for (let i in this.realTimeFeeds) {
         if (responseJson[this.realTimeFeeds[i]]) {
           responseJson.ttl = this.ttl || this.config.TIME_TO_LIVE
@@ -48,7 +49,7 @@ module.exports = class WmataWrapper {
         responseJson.captranDebug = {
           debugMode: this.debugMode,
           queryQueueLength: this.queryQueueLength,
-          timestamp: responseJson.timestamp,
+          timestamp: now,
           ttl: responseJson.ttl
         }
       }
