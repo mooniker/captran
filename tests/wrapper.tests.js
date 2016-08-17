@@ -46,11 +46,15 @@ describe('WMATA API wrapper class\'s renderQueryUrl method', () => {
 })
 
 describe('WMATA API wrapper class\'s addTimestamp method', () => {
-  it('should add a timestamp to an object', done => {
+  it('should add a timestamp attribute (`last_updated`) to an object', done => {
     let timeless = wmata.addTimestamp({})
     let now = Date.now()
-    assert.isAtLeast(timeless.timestamp, now - 20)
-    assert.isAtMost(timeless.timestamp, now + 200)
+    assert.isAtLeast(timeless.last_updated, now - 20)
+    assert.isAtMost(timeless.last_updated, now + 200)
+    if (timeless.captranDebug) {
+      assert.isAtLeast(timeless.captranDebug.timestamp, now - 20)
+      assert.isAtMost(timeless.captranDebug.timestamp, now + 200)
+    }
     done()
   })
   it(`should add a time-to-live (TTL, i.e. expiration age) to JSON data that has real-time data content (such as ${wmata.realTimeFeeds[0]})`, done => {
