@@ -81,6 +81,7 @@ module.exports = class Gbfs {
     return this.getFile('station_status', callback)
   }
 
+  // list available files for this system
   dir () {
     this.gbfs((error, gbfs) => {
       if (error) {
@@ -96,8 +97,8 @@ module.exports = class Gbfs {
     })
   }
 
-  getStations (xcallback) {
-    return Promise.all([
+  getStations (callback) {
+    let getStationsPromise = Promise.all([
       this.getFile('station_information'),
       this.getFile('station_status')
     ]).then(results => {
@@ -113,10 +114,13 @@ module.exports = class Gbfs {
         data: mergedStationsData
       }
     })
+    return callback
+      ? getStationsPromise.catch(err => callback(err)).then(results => callback(null, results))
+      : getStationsPromise
   }
 
-  getStationsNear (lat, lon, radius, xcallback) {
-    return this.getStations().then(stationsData => {
+  getStationsNear (lat, lon, radius, callback) {
+    let getStationsPromise = this.getStations().then(stationsData => {
       let nearbyStations = stationsData.data.filter(station => {
         return calcDistanceBetweenLatLongs(lat, lon, station.lat, station.lon) <= radius
       })
@@ -126,6 +130,9 @@ module.exports = class Gbfs {
         data: nearbyStations
       }
     })
+    return callback
+      ? getStationsPromise.catch(err => callback(err)).then(results => callback(null, results))
+      : getStationsPromise
   }
 
 }
