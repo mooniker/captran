@@ -12,10 +12,8 @@ wmata.query({ // returns a promise
   api: 'busPositions'
 }).then(console.log)
 
-// conventional callbacks, if supplied, work just as well
-wmata.query({ api: 'busPositions' }, (error, doc) => {
-  console.log(error || doc)
-})
+// error-first callbacks, if supplied, work just as well
+wmata.query({ api: 'busPositions' }, (error, doc) => console.log(error || doc))
 ```
 
 ...fetches for you all the JSON with which you may do as you please.
@@ -48,4 +46,70 @@ let rideon = new RideOn({ apiKey: 'auth_token_goes_here' })
 rideon.query({ // returns a promise
   api: 'busPositions'
 }).then(console.log)
+```
+
+Use the `captran-gbfs` module as a wrapper for [General Bikeshare Feed Specification](https://github.com/NABSA/gbfs), such as that used by [Capital Bikeshare](https://www.capitalbikeshare.com/) (a bicycle sharing network in the Washington, D.C., area):
+
+```js
+const Gbfs = require('./captran-gbfs')
+let cabi = new Gbfs({
+  gbfsUrl: 'https://gbfs.capitalbikeshare.com/gbfs/gbfs.json'
+})
+
+cabi.getStationsNear(38.8977, -77.0365, 0.3).then(console.log, console.error)
+```
+
+...should print real-time Cabi station data near the White House:
+
+```json
+{
+  "last_updated":1481408837,
+  "ttl":10,
+  "data":[
+    {
+      "station_id":"83",
+      "name":"New York Ave & 15th St NW",
+      "short_name":"31222",
+      "lat":38.8991,
+      "lon":-77.0337,
+      "rental_methods":[
+        "KEY",
+        "CREDITCARD"
+      ],
+      "capacity":19,
+      "eightd_has_key_dispenser":false,
+      "num_bikes_available":12,
+      "num_bikes_disabled":2,
+      "num_docks_available":5,
+      "num_docks_disabled":0,
+      "is_installed":1,
+      "is_renting":1,
+      "is_returning":1,
+      "last_reported":1481408764,
+      "eightd_has_available_keys":false
+    },
+    {
+      "station_id":"349",
+      "name":"17th & G St NW",
+      "short_name":"31277",
+      "lat":38.89841,
+      "lon":-77.039624,
+      "rental_methods":[
+        "KEY",
+        "CREDITCARD"
+      ],
+      "capacity":31,
+      "eightd_has_key_dispenser":false,
+      "num_bikes_available":3,
+      "num_bikes_disabled":2,
+      "num_docks_available":26,
+      "num_docks_disabled":0,
+      "is_installed":1,
+      "is_renting":1,
+      "is_returning":1,
+      "last_reported":1481408820,
+      "eightd_has_available_keys":false
+    }
+  ]
+}
 ```
