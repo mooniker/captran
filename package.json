@@ -4,8 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha tests/"
+    "test": "./node_modules/mocha/bin/mocha tests/",
+    "jest": "npx jest",
+    "test:watch": "npx jest --watchAll",
+    "test:coverage": "npx jest --coverage --passWithNoTests"
   },
+  "keywords": [
+    "wmata",
+    "metro",
+    "transportation"
+  ],
   "author": "James Moon <mooniker@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -13,5 +21,15 @@
     "chalk": "^2.4.2",
     "table": "^5.4.6"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^24.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mooniker/captran.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mooniker/captran/issues"
+  },
+  "homepage": "https://github.com/mooniker/captran#readme"
 }
