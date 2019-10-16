@@ -1,6 +1,7 @@
 const { table } = require("table");
 const chalk = require("chalk");
 const wmata = require("./index");
+const { DEFAULT_WMATA_STATION_CODE } = process.env;
 
 const addColorIfNeeded = text => {
   switch (text) {
@@ -78,7 +79,13 @@ const makeTable = (data, params) => {
 };
 
 const captran = new wmata({ apiKey: "6b91cd07f734405197c45eac7c146a01" });
+captran.get
+  .NextTrains(DEFAULT_WMATA_STATION_CODE)
+  .then(data => console.log(makeTable(data)));
+  
 setInterval(() => {
   process.stdout.write("\033c");
-  captran.get.NextTrains().then(data => console.log(makeTable(data)));
+  captran.get
+    .NextTrains(DEFAULT_WMATA_STATION_CODE)
+    .then(data => console.log(makeTable(data)));
 }, 30000);
