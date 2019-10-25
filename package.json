@@ -1,13 +1,14 @@
 {
   "name": "captran",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha tests/",
-    "jest": "npx jest",
-    "test:watch": "npx jest --watchAll",
-    "test:coverage": "npx jest --coverage --passWithNoTests"
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "lint:js": "eslint . --ext .js",
+    "lint:js:fix": "npm run lint:js -- --fix"
   },
   "keywords": [
     "wmata",
@@ -19,10 +20,22 @@
   "dependencies": {
     "axios": "^0.19.0",
     "chalk": "^2.4.2",
+    "commander": "^3.0.2",
     "table": "^5.4.6"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-jest": "^22.20.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2"
+  },
+  "bin": {
+    "captran": "./src/cli"
   },
   "repository": {
     "type": "git",
@@ -31,5 +44,16 @@
   "bugs": {
     "url": "https://github.com/mooniker/captran/issues"
   },
-  "homepage": "https://github.com/mooniker/captran#readme"
+  "homepage": "https://github.com/mooniker/captran#readme",
+  "lint-staged": {
+    "src/**/*.js": [
+      "npm run --silent lint:js:fix",
+      "git add"
+    ],
+    "husky": {
+      "hooks": {
+        "pre-commit": "lint-staged"
+      }
+    }
+  }
 }

@@ -1,8 +1,7 @@
 module.exports = {
-    "extends": "standard",
-    "installedESLint": true,
-    "plugins": [
-        "standard",
-        "promise"
-    ]
+  extends: ["airbnb", "prettier"],
+  plugins: ["prettier"],
+  rules: {
+    "prettier/prettier": ["error"]
+  }
 };
