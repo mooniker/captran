@@ -1,4 +1,4 @@
-# captran [![Build Status](https://travis-ci.org/mooniker/captran.svg?branch=master)](https://travis-ci.org/mooniker/captran) [![Dependency Status](https://david-dm.org/mooniker/captran.svg)](https://david-dm.org/mooniker/captran) [![Code Climate](https://codeclimate.com/github/mooniker/captran/badges/gpa.svg)](https://codeclimate.com/github/mooniker/captran)
+# captran [![Build Status](https://travis-ci.org/mooniker/captran.svg?branch=master)](https://travis-ci.org/mooniker/captran) [![Dependency Status](https://david-dm.org/mooniker/captran.svg)](https://david-dm.org/mooniker/captran) [![Code Climate](https://codeclimate.com/github/mooniker/captran/badges/gpa.svg)](https://codeclimate.com/github/mooniker/captran) [![Greenkeeper badge](https://badges.greenkeeper.io/mooniker/captran.svg)](https://greenkeeper.io/)
 
 Captran is a transportation API wrapper and bundler for the Washington, D.C., metropolitan area. Extra features include call throttling/scheduling to avoid [429'ing](https://httpstatuses.com/429) (when needed) and caching for performance.
 
