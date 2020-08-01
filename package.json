@@ -1,30 +1,59 @@
 {
   "name": "captran",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha tests/"
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage --passWithNoTests",
+    "lint:js": "eslint . --ext .js",
+    "lint:js:fix": "npm run lint:js -- --fix"
   },
+  "keywords": [
+    "wmata",
+    "metro",
+    "transportation"
+  ],
   "author": "James Moon <mooniker@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bottleneck": "^1.12.0",
-    "gtfs-realtime-bindings": "0.0.4",
-    "ioredis": "^2.1.0",
-    "lodash": "^4.14.0",
-    "request": "^2.74.0",
-    "request-promise": "^4.0.2"
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "commander": "^3.0.2",
+    "table": "^5.4.6"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "codeclimate-test-reporter": "^0.3.3",
-    "eslint": "^3.12.0",
-    "eslint-config-standard": "^6.2.1",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
-    "mocha": "^2.5.3",
-    "standard": "^8.6.0",
-    "supertest": "^1.2.0"
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-jest": "^22.20.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2"
+  },
+  "bin": {
+    "captran": "./src/cli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mooniker/captran.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mooniker/captran/issues"
+  },
+  "homepage": "https://github.com/mooniker/captran#readme",
+  "lint-staged": {
+    "src/**/*.js": [
+      "npm run --silent lint:js:fix",
+      "git add"
+    ],
+    "husky": {
+      "hooks": {
+        "pre-commit": "lint-staged"
+      }
+    }
   }
 }
