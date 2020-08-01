@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+<script src="/primus/primus.js"></script>
+<script>
+// connect to current url
+var primus = Primus.connect()
+primus.on('open', function() {
+  console.log('connected!')
+})
+primus.on('data', function(data) {
+  console.log('data:', data)
+})
+</script>
+</body>
+</html>
